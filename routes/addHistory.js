@@ -10,9 +10,6 @@ router.post('/history', function (req, res) {
     // }
     res.writeHead(200, {'Content-Type': 'text/json'});
 	var checkData = validateHistoryObject(req.body);
-	console.dir("checkData");
-	console.dir(checkData);
-	console.dir("checkData");
 	if(!checkData.status) {
 		var data = new Object();
 		data.success = false;
