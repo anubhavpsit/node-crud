@@ -3,11 +3,6 @@ var router = express.Router();
 
 router.post('/history', function (req, res) {
 	console.log("Adding History");
-	// console.log(req.body);
-    // if (!req.body) {
-    //     res.send(req.body);
-    //     return true;
-    // }
     res.writeHead(200, {'Content-Type': 'text/json'});
 	var checkData = validateHistoryObject(req.body);
 	if(!checkData.status) {
@@ -17,6 +12,7 @@ router.post('/history', function (req, res) {
 		data.message = checkData.message;
 	    res.end(JSON.stringify(data));
 	} else{
+	    var today_date = new Date().toISOString().slice(0,10);
 		var data = new Object();
 		data.success = true;
 		data.status_code = 200;
