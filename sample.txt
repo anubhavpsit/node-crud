@@ -1,0 +1,10 @@
+POST /v1/add/history HTTP/1.1
+Host: localhost:3001
+Content-Type: application/x-www-form-urlencoded
+Auth-Key: 7cab2267ab2cf19c4b6eaa0ce02d9f0e
+Cache-Control: no-cache
+Postman-Token: d9ca29b5-fcb3-5bec-a5db-a2f5a4d3e3d0
+
+time=34&userid=123456789&data=%7B%22name%22%3A%22Test%22%2C%22points%22%3A%225%22%2C%22last_played%22%3A%2209-06-2018%22%2C%22credits%22%3A100%2C%22points%22%3A25000%7D
+
+
