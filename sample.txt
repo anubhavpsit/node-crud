@@ -8,3 +8,27 @@ Postman-Token: d9ca29b5-fcb3-5bec-a5db-a2f5a4d3e3d0
 time=34&userid=123456789&data=%7B%22name%22%3A%22Test%22%2C%22points%22%3A%225%22%2C%22last_played%22%3A%2209-06-2018%22%2C%22credits%22%3A100%2C%22points%22%3A25000%7D
 
 
+#1 : There should be three parameter in the request 
+	time [interger]
+	userid [integer]
+	data [JSON Format]
+Then only data will be saved else the error will be returned
+
+#2 : If hit is coming for the same time then the data will be replaced with the new one (We are writing file not appending the data).
+
+#3 : Authetication is very basic send this in Auth-Key in header with the value => 7cab2267ab2cf19c4b6eaa0ce02d9f0e
+
+4 : There should be three parameter in the request 
+	time [interger]
+	userid [integer]
+	data [JSON Format]
+Then only data will be saved else the error will be returned
+
+#2 : If hit is coming for the same time then the data will be replaced with the new one (We are writing file not appending the data).
+
+#3 : Authetication is very basic send this in Auth-Key in header with the value => 7cab2267ab2cf19c4b6eaa0ce02d9f0e
+
+
+
+http://ec2-18-216-212-170.us-east-2.compute.amazonaws.com:3001/v1/add/history
+http://ec2-18-216-212-170.us-east-2.compute.amazonaws.com:3001/v1/get/history
