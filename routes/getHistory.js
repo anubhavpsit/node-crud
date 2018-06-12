@@ -36,6 +36,24 @@ router.post('/history', function (req, res) {
 	    var todayDate = new Date().toISOString().slice(0,10);
 	    var dirPath = "history/"+todayDate+"/"+req.body.userid;
 	    console.dir(dirPath);
+	    
+	    var fileNames = [];
+		readFiles('dirPath', (name, ext, path) => {
+		  console.log(`file name is: ${name}`);
+		  console.log(`file extension is: ${ext}`);
+		  console.log(`file path is: ${path}`);
+		});
+//	    var fileNames = getFileNames(dirPath);
+	    //var files = fs.readdir(dirPath);
+		// fs.readdir(dirPath, (err, files) => {
+		//   files.forEach(file => {
+		// 	console.dir(file);
+		//     fileNames.push(file);
+		//   });
+		// });
+
+		console.dir(fileNames);
+
 	    //Check if user's today dir is created or not if not create it
 	  //   if(!mkdirpath(dirPath)) {
 			// console.log("Creating direcotry to save file");
@@ -64,6 +82,39 @@ router.post('/history', function (req, res) {
 		// });
 	}
 })
+
+
+function getFileNames(dirname) {
+	console.dir("A");
+	var fileNames = [];
+  	fs.readdirsync(dirname, function(err, filenames) {
+    filenames.forEach(function(filename) {
+    	console.dir("B");
+    	fileNames.push(filename);
+    });
+  });
+
+  	return fileNames;
+
+}
+
+function readFiles(dirPath, processFile) {
+  // read directory
+  FS.readdir(dirPath, (err, fileNames) => {
+    if (err) throw err;
+    // loop through files
+    fileNames.forEach((fileName) => {
+      // get current file name
+      let name = PATH.parse(fileName).name;
+      // get current file extension
+      let ext = PATH.parse(fileName).ext;
+      // get current file path
+      let path = PATH.resolve(dirPath, fileName);
+      // callback, do something with the file
+      //processFile(name, ext, path);
+    });
+  });
+}
 
 function validateHistoryObject(data) 
 {
