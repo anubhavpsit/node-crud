@@ -14,6 +14,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Add history
 app.use('/v1/add', require('./routes/addHistory'));
+// Get history
+app.use('/v1/get', require('./routes/getHistory'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
