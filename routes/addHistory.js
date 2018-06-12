@@ -100,10 +100,10 @@ function validateHistoryObject(data)
 				ret_data.status = false;
 				message.push("Time should not be empty");				
 			}
-			if (isNaN(data.time)) {
-				ret_data.status = false;
-				message.push("Time should be integer");
-			}
+			// if (isNaN(data.time)) {
+			// 	ret_data.status = false;
+			// 	message.push("Time should be integer");
+			// }
 		}
 
 		if(ret_data.status) {
