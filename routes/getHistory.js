@@ -76,7 +76,8 @@ router.post('/history', function (req, res) {
 			    return Promise.all(filenames.map(getFile(dirPath)));
 			}).then(function (files) {
 			    files.forEach(function(file) {
-			    	summaryFiles.push(JSON.parse(file));
+			    	//summaryFiles.push(JSON.parse(file));
+			    	summaryFiles.push(file+"#HANUGAMESHISTORY#");
 			    });
 				var data = new Object();
 				data.success = true;
