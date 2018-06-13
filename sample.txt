@@ -18,17 +18,38 @@ Then only data will be saved else the error will be returned
 
 #3 : Authetication is very basic send this in Auth-Key in header with the value => 7cab2267ab2cf19c4b6eaa0ce02d9f0e
 
-4 : There should be three parameter in the request 
+#4 : There should be three parameter in the request 
 	time [interger]
 	userid [integer]
 	data [JSON Format]
 Then only data will be saved else the error will be returned
 
-#2 : If hit is coming for the same time then the data will be replaced with the new one (We are writing file not appending the data).
-
-#3 : Authetication is very basic send this in Auth-Key in header with the value => 7cab2267ab2cf19c4b6eaa0ce02d9f0e
 
 
 
-http://ec2-18-216-212-170.us-east-2.compute.amazonaws.com:3001/v1/add/history
-http://ec2-18-216-212-170.us-east-2.compute.amazonaws.com:3001/v1/get/history
+
+GET HISTORY 
+
+POST /v1/get/history HTTP/1.1
+Host: localhost:3001
+Content-Type: application/x-www-form-urlencoded
+Auth-Key: 7cab2267ab2cf19c4b6eaa0ce02d9f0e
+Cache-Control: no-cache
+Postman-Token: 9c4f0179-769f-948c-ef64-3d30aceaf3da
+
+date=2018-06-12&userid=2234566
+
+
+#1 : There should be three parameter in the request 
+	date [date yyyy-mm-dd format] 
+	userid [integer]
+
+#2 : Set the auth key in the header.
+
+http://localhost:3001/v1/get/history
+Content-Type application/x-www-form-urlencoded
+Auth-Key 7cab2267ab2cf19c4b6eaa0ce02d9f0e
+
+date=2018-06-12
+userid=2234566
+
