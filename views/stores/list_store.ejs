@@ -1,0 +1,52 @@
+<%- include partials/header.ejs %>
+
+<div class="col-lg-12">
+    <div class="col-lg-12">
+        <table class="table">
+            <tr>
+                <td>
+                    <a class="btn btn-primary" href="stores/add" role="button">Add Store</a>
+                </td>
+            </tr>
+        </table>
+        <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Store Name</th>
+                <th scope="col">Cluster</th>
+                <th scope="col">Store Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < data.length; i++) { %>
+                    <tr>
+                        <th scope="row"><%= data[i].store_id %></th>
+                        <td><%= data[i].store_name %></td>
+                        <td><%= data[i].cluster_id %></td>
+                        <td><%= data[i].store_type_id %></td>
+                        <td><%= data[i].status %></td>
+                        <td>
+                            <div class="dropdown dropleft">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <div class="dropdown-header">Status</div>
+                                        <a class="dropdown-item" href="javascript:void(0);">Active</a>
+                                        <a class="dropdown-item" href="javascript:void(0);">Inactive</a>
+                                        <div class="dropdown-header">Images</div>
+                                        <a class="dropdown-item" href="javascript:void(0);">Store Images</a>
+                                        <a class="dropdown-item" href="javascript:void(0);">Store Banner Image</a>
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<%- include partials/footer.ejs %>

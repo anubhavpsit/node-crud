@@ -1,0 +1,111 @@
+<%- include partials/header.ejs %>
+
+<div class="col-lg-12">
+    <div class="col-lg-12">
+        <table class="table">
+            <tr>
+                <td>
+                    <a class="btn btn-primary" href="/stores" role="button">Back</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-lg-12">
+        <form action="/stores/add" method="post">
+            <div class="form-row">
+                <h3>Store Owner Details</h3>           
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                <label for="inputEmail4">Store Name</label>
+                <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name">
+                </div>
+                <div class="form-group col-md-6">
+                <label for="inputPassword4">Store Type</label>
+                <select id="store_type" name="store_type" class="form-control">
+                        <option selected value="0">Choose...</option>
+                        <option value="4">Parking</option>
+                        <option value="1">Store</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                <label for="inputPassword4">Company Name</label>
+                <select id="company_name" name="company_name" class="form-control">
+                        <option selected value="0">Choose...</option>
+                        <option value="1">Unyde System</option>
+                        <option value="2">Google Inc</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                    <h3>Store Owner Details</h3>                
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Store Manager Name</label>
+                    <input type="text" class="form-control" id="store_manager_name" name="store_manager_name" placeholder="Store Manager Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Mobile number</label>
+                    <input type="text" class="form-control" id="store_mobile_number" name="store_mobile_number" placeholder="Mobile number">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Store Owner Name</label>
+                    <input type="text" class="form-control"  id="store_owner_name" name="store_owner_name" placeholder="Store Owner Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Phone number</label>
+                    <input type="text" class="form-control" id="store_phone_number" name="store_phone_number" placeholder="Phone number">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email</label>
+                    <input type="text" class="form-control" id="store_email" name="store_email" placeholder="Store Email">
+                </div>
+            </div>
+            <div class="form-row">
+                <h3>Address Details</h3>                
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <label for="inputEmail4">Address 1</label>
+                    <input type="text" class="form-control" id="address_1" name="address_1" placeholder="Address 1">
+                </div>
+                <div class="form-group col-md-5">
+                    <label for="inputEmail4">Address 2</label>
+                    <input type="text" class="form-control" id="address_2" name="address_2" placeholder="Address 2">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="inputZip">Pin Code</label>
+                    <input type="text" class="form-control" id="pin_code" name="pin_code">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="inputCity">City</label>
+                    <input type="text" class="form-control" id="city" name="city">
+                </div>
+                <div class="form-group col-md-4">
+                <label for="inputState">State</label>
+                <select id="state" name="state" class="form-control">
+                    <option selected value="0">Choose...</option>
+                    <option value="1">New Delhi</option>
+                    <option value="2">Uttar Pradesh</option>
+                    <option value="3">Haryana</option>
+                </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputState">Country</label>
+                    <select id="country" name="country" class="form-control">
+                        <option selected value="0">Choose...</option>
+                        <option value="1">India</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Store</button>
+        </form>
+    </div>
+</div>
+<%- include partials/footer.ejs %>
