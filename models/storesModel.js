@@ -71,13 +71,12 @@ function getData(callback) {
 }
 
 function saveStoreData(data, callback) {
-
+console.dir(data);
     // db.query('SELECT * FROM store_master', function(err, res, fields) {
     //     callback(err, res);
     // });
     var postData = [
         data.store_name,
-        data.store_type,
         data.store_type,
         data.company_name,
         data.store_manager_name,
@@ -87,31 +86,16 @@ function saveStoreData(data, callback) {
         data.store_email,
         data.address_1,
         data.address_2,
-        data.city];
-
+        data.city,
+        data.cluster_id];
+        console.dir(postData);
     db.query('INSERT INTO store_master (\
         store_name,store_type_id,company_id,\
         store_manager_name, store_owner_name, mobile_number, phone_number,\
-        email, address1, address2, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
+        email, address1, address2, city, cluster_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
         if (err) throw err
             callback(err, result);
       });
-//     { store_name: 'adsd',
-//     store_type: '1',
-//     company_name: '1',
-//     store_manager_name: '',
-//     store_mobile_number: '',
-//     store_owner_name: '',
-//     store_phone_number: '',
-//     store_email: '',
-//     address_1: '',
-//     address_2: '',
-//     pin_code: '',
-//     city: '',
-//     state: '0',
-//     country: '0' 
-// }
-  
 }
 
 module.exports = {
