@@ -1,12 +1,16 @@
 var express = require('express')
 var router = express.Router()
-var StoresModel = require('../models/storesModel');
 //var Busboy = require('busboy');
 var config = require('../config');
 var S = require('string');
 var fs = require("fs");
 var path = require("path");
 var mkdirp = require('mkdirp');
+
+var StoresModel = require('../models/storesModel');
+var DbFunctionsModel = require('../models/storesTypeModel');
+
+
 
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3({
@@ -15,6 +19,7 @@ var s3 = new AWS.S3({
     version: '2006-03-01',
     region: 'ap-south-1'
 });
+
 
 // define the home page route
 router.get('/', function (req, res) {
@@ -25,9 +30,24 @@ router.get('/', function (req, res) {
     });
 })
 
+
+
+
 router.get('/add', function (req, res) {
-    res.render('create_store')
-})
+
+    var promise = loadDbData();
+    promise.then( function(result) {
+        // console.dir("result");
+        // console.dir(result);
+        // yay! I got the result.
+        res.render('create_store', { data: result });
+    }, function(error) {
+        // The promise was rejected with this error.
+        console.dir("error");
+        console.dir(error);
+    });
+    // res.render('create_store');
+});
 
 router.post('/single_image', function (req, res) {
     var storeId = req.body.typeId;
@@ -208,6 +228,18 @@ console.dir(req.body);
     });
 })
 
+var storeTypes = () => {
+    var storeTypes = [];
+    DbFunctionsModel.getStoreTypeData(function(err, result) {
+        for (var i = 0; i< result.length; i++) {
+            var d = new Object();
+            d.store_type_id = result[i].store_type_id;
+            d.store_type = result[i].store_type;
+            storeTypes.push(d);
+        }
+        return storeTypes;
+    });
+}
 var uploadFile = (dirImagePath, dbImagePath) => {
     var params = {
       Bucket: 'ally-staging-images',
@@ -235,4 +267,45 @@ router.get('/stores', function (req, res) {
   res.render('/stores/list_stores.ejs', { title: 'Hey', message: 'Hello there!' })
 })
 
+
+function loadDbData()
+{
+    return new Promise(function(resolve, reject) {
+        //var dataReady = false;
+        var data = new Object();
+        var storeTypes = [];
+        var clustersList = [];
+        var companyList = [];
+        DbFunctionsModel.getStoreTypeData(function(err, result) {
+            for (var i = 0; i< result.length; i++) {
+                var d = new Object();
+                d.store_type_id = result[i].store_type_id;
+                d.store_type = result[i].store_type;
+                storeTypes.push(d);
+            }
+            data.storeTypes = storeTypes;
+
+            DbFunctionsModel.getClusterList(function(err, result) {
+                for (var i = 0; i< result.length; i++) {
+                    var d = new Object();
+                    d.cluster_id = result[i].cluster_id;
+                    d.cluster_name = result[i].cluster_name;
+                    clustersList.push(d);
+                }
+                data.clustersList = clustersList;
+
+                DbFunctionsModel.getCompanyList(function(err, result) {
+                    for (var i = 0; i< result.length; i++) {
+                        var d = new Object();
+                        d.company_id = result[i].company_id;
+                        d.company_name = result[i].company_name;
+                        companyList.push(d);
+                    }
+                    data.companyList = companyList;
+                    resolve(data);
+                });
+            });
+        });
+    });
+}
 module.exports = router

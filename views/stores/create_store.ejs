@@ -24,8 +24,9 @@
                 <label for="inputPassword4">Store Type</label>
                 <select id="store_type" name="store_type" class="form-control">
                         <option selected value="0">Choose...</option>
-                        <option value="4">Parking</option>
-                        <option value="1">Store</option>
+                        <% for(var i=0; i < data.storeTypes.length; i++) { %>
+                            <option value="<%= data.storeTypes[i].store_type_id %>"><%= data.storeTypes[i].store_type %></option>
+                        <% } %>
                     </select>
                 </div>
             </div>
@@ -34,16 +35,18 @@
                 <label for="inputPassword4">Company Name</label>
                 <select id="company_name" name="company_name" class="form-control">
                         <option selected value="0">Choose...</option>
-                        <option value="1">Unyde System</option>
-                        <option value="2">Google Inc</option>
+                        <% for(var i=0; i < data.companyList.length; i++) { %>
+                            <option value="<%= data.companyList[i].company_id %>"><%= data.companyList[i].company_name %></option>
+                        <% } %>
                     </select>
                 </div>
                 <div class="form-group col-md-6">
                 <label for="inputPassword4">Cluster</label>
                 <select id="cluster_id" name="cluster_id" class="form-control">
                         <option selected value="0">Choose...</option>
-                        <option value="1">DLF</option>
-                        <option value="2">Logix Mall</option>
+                        <% for(var i=0; i < data.clustersList.length; i++) { %>
+                            <option value="<%= data.clustersList[i].cluster_id %>"><%= data.clustersList[i].cluster_name %></option>
+                        <% } %>
                     </select>
                 </div>
             </div>
