@@ -117,10 +117,6 @@ function saveStoreData(data, callback) {
         if (err) {
             throw err;
         } else {
-            console.dir("INSERT result");
-            console.dir(result.insertId);
-            console.dir(data);
-            console.dir(data.cluster_id);
             var floorData = [
                 data.cluster_id,
                 result.insertId,

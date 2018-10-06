@@ -31,7 +31,6 @@ router.get('/', function (req, res) {
 })
 
 router.get('/getClusterFloor', function (req, res) {
-    console.dir(req.query.clusterId);
     var postData = new Object();
     postData.clusterId = req.query.clusterId;
     DbFunctionsModel.getClusterFloors(postData, function(err, result) {
@@ -198,7 +197,7 @@ router.get('/getAllImages', function (req, res) {
 });
 
 router.post('/add', function (req, res) {
-console.dir(req.body);
+//console.dir(req.body);
     StoresModel.saveStoreData(req.body, function(err, result) {
         if(result.insertId) {
             if(req.files) {
@@ -226,7 +225,7 @@ console.dir(req.body);
                                   StoresModel.saveStoreIcon(storeIconData
                                     , function(err, result) {
                                         console.dir("Added store image");
-                                        console.dir(result);
+                                        //console.dir(result);
                                   });
                                   uploadFile(dirImagePath, dbImagePath);
                             });
@@ -239,7 +238,7 @@ console.dir(req.body);
                           StoresModel.saveStoreIcon(storeIconData
                             , function(err, result) {
                                 console.dir("Added store image");
-                                console.dir(result);
+                                //console.dir(result);
                           });
                           uploadFile(dirImagePath, dbImagePath);
                         console.dir('File uploaded!');
