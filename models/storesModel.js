@@ -1,4 +1,6 @@
 var db = require('./db_connection');
+var config = require('../config');
+var fs = require("fs");
 
 // db.query('SELECT * FROM store_master', function(err, result) {
 //     if (err) throw err;
@@ -66,12 +68,29 @@ var db = require('./db_connection');
 
 function getData(callback) {
     db.query('SELECT * FROM store_master order by store_id desc', function(err, res, fields) {
+        //console.dir(res.image);
+        for(var i = 0; i<res.length; i++) {
+            //console.dir(res[i].image);
+            if((res[i].image == null) || (res[i].image == '')) {
+                res[i].image = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+            } else {
+                //let s3Url = config.default.s3url +res[i].image;
+                res[i].image = config.default.s3url +res[i].image;
+            }
+            //res[i].image = s3Url;
+        }
         callback(err, res);
     });
 }
 
+function saveStoreIcon(data, callback) {
+    db.query("UPDATE store_master set image = '"+data.dbImagePath+"' WHERE store_id = " + data.storeId, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+      });
+}
+
 function saveStoreData(data, callback) {
-console.dir(data);
     // db.query('SELECT * FROM store_master', function(err, res, fields) {
     //     callback(err, res);
     // });
@@ -88,7 +107,7 @@ console.dir(data);
         data.address_2,
         data.city,
         data.cluster_id];
-        console.dir(postData);
+
     db.query('INSERT INTO store_master (\
         store_name,store_type_id,company_id,\
         store_manager_name, store_owner_name, mobile_number, phone_number,\
@@ -100,7 +119,8 @@ console.dir(data);
 
 module.exports = {
     getData: getData,
-    saveStoreData: saveStoreData
+    saveStoreData: saveStoreData,
+    saveStoreIcon: saveStoreIcon
 }
 
 

@@ -1,10 +1,15 @@
 var express = require('express');
+var fileUpload = require('express-fileupload');
 var app = express();
 var fs = require("fs");
 var bodyParser = require('body-parser');
 var path = require('path');
+//var busboy = require('connect-busboy');
+//var Busboy = require('busboy');
 var db = require('./models/db_connection');
 
+
+app.use(fileUpload());
 // var mysql = require('mysql')
 // var connection = mysql.createConnection({
 //   host     : 'localhost',

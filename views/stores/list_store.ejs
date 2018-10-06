@@ -13,6 +13,7 @@
             <thead>
                 <tr>
                 <th scope="col">#</th>
+                <th scope="col">Icon</th>
                 <th scope="col">Store Name</th>
                 <th scope="col">Cluster</th>
                 <th scope="col">Store Type</th>
@@ -24,6 +25,7 @@
                 <% for(var i=0; i < data.length; i++) { %>
                     <tr>
                         <th scope="row"><%= data[i].store_id %></th>
+                        <td><img src="<%= data[i].image %>" style="width:60px;" /></td>
                         <td><%= data[i].store_name %></td>
                         <td><%= data[i].cluster_id %></td>
                         <td><%= data[i].store_type_id %></td>
