@@ -1,3 +1,4 @@
 node_modules/*
 history/*
 public/images/*
+public/tmp_images/*

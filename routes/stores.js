@@ -8,15 +8,6 @@ var fs = require("fs");
 var path = require("path");
 var mkdirp = require('mkdirp');
 
-//var splash_screen = require('splash-screen');
-//import { enable, destory } from 'splash-screen';
-//splash_screen.enable('tailing');
-//enable('tailing');
-
-
-//var loadingSpinner = require('loading-spinner');
-//var please_wait = require('please-wait');
-//$("#load_me_baby").click();
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3({
     accessKeyId: 'AKIAIQHJUN2GXCSYBIXA', //process.env.AWS_ACCESS_KEY,
@@ -24,148 +15,6 @@ var s3 = new AWS.S3({
     version: '2006-03-01',
     region: 'ap-south-1'
 });
-
-// loadingSpinner.start();
-
-// setTimeout(function(){
-//     loadingSpinner.stop();
-// }, 5000);
-
-// please_wait.pleaseWait({
-//     logo: "assets/images/pathgather.png",
-//     backgroundColor: '#f46d3b',
-//     loadingHtml: "<div class='sk-spinner sk-spinner-wave'><div class='sk-rect1'></div><div class='sk-rect2'></div><div class='sk-rect3'></div><div class='sk-rect4'></div><div class='sk-rect5'></div></div>"
-// });
-
-
-
-// var storeId = 143;
-// let imageName = S('Screenshot_from_2018-09-28_14-18-29.png').replaceAll(' ', '_').s;
-// let localPath = config.default.store_icon.replace(/{{store_id}}/gi, storeId);
-// let dbImagePath = S(localPath).replaceAll('images/', '').s+imageName;
-// //let dirPath = path.join(__dirname+'/../public/'+localPath);
-// let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
-
-// //var fileName = 'store/142/store_logo/Screenshot_from_2018-08-29_00-35-26.png';
-// var fileName = dirImagePath;
-// console.dir("AA => "+fileName);
-
-// var uploadFile = () => {
-//     // fs.readFile(fileName, (err, data) => {
-//     //    if (err) throw err;
-//     //    const params = {
-//     //        Bucket: 'ally-staging-images', // pass your bucket name
-//     //        Key: dbImagePath, // file will be saved as testBucket/contacts.csv
-//     //        //Body: JSON.stringify(data, null, 2),
-//     //        Body : fs.createReadStream(fileName),
-//     //        StorageClass: 'REDUCED_REDUNDANCY'
-//     //    };
-//     //    s3.upload(params, function(s3Err, data) {
-//     //        if (s3Err) throw s3Err
-//     //        console.log(`File uploaded successfully at ${data.Location}`)
-//     //    });
-//     // });
-
-
-//     var params = {
-//         Bucket: 'ally-staging-images',
-//         Body : fs.createReadStream(dirImagePath),
-//         Key: dbImagePath
-//         //SourceFile: dirImagePath
-//       };
-
-//       //params = {Bucket: myBucket, Key: myKey, Body: 'Hello!'};
-
-//     //   s3.putObject(params, function(err, data) {
- 
-//     //       if (err) {
- 
-//     //           console.log(err)
- 
-//     //       } else {
-//     //             console.dir(data);
-//     //             console.log("Successfully uploaded data to myBucket/myKey");
-//     //       }
- 
-//     // });
-
-       
-//       s3.upload(params, function (err, data) {
-//         //handle error
-//         if (err) {
-//           console.log("Error", err);
-//         }
-      
-//         //success
-//         if (data) {
-//           console.log("Uploaded in:", data.Location);
-//         }
-//       });
-//   };
-  
-//   uploadFile();
-
-// var storeIconData = new Object();
-// storeIconData.storeId = 142;
-// storeIconData.dbImagePath = 'store/142/store_logo/Screenshot_from_2018-08-29_00-35-26.png';
-// StoresModel.saveStoreIcon(storeIconData
-//   , function(err, result) {
-
-// });
-
-//let localPath = path.join(__dirname+'/../public/');
-
-// middleware that is specific to this router
-// router.use(function timeLog (req, res, next) {
-//   console.log('Time: ', Date.now())
-//   next()
-// })
-
-// let sampleFileName = "Screenshot from 2018-08-29 01-44-24.png";
-
-
-// var imagePath = getImageStoragePath(storeId, sampleFileName);
-// console.dir(imagePath);
-
-// fs.existsSync
-// if (fs.existsSync('https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png')) {
-//     console.dir("Do something");
-// } else {
-//     console.dir("DO rESt");
-// }
-
-// if (!fs.existsSync(publicPath)) {
-//     console.dir("NOT EXITST");
-//     fs.mkdirSync(publicPath);
-// }
-
-// var storeId = 6;
-// let storeImagePath = config.default.store_icon;
-// //let storeIconPath = storeImagePath.replace(/{{store_id}}/gi, storeId);
-// //let filePath = storeIconPath+S(fileName).replaceAll(' ', '_').s;
-
-// var storeIconPath = 'images/astore/6/store_logo/';
-// let publicPath = path.join(__dirname+'/../public/'+storeIconPath);
-// // if (!fs.existsSync(publicPath)) {
-// //     console.dir("NOT EXITST");
-// //     fs.mkdirSync(publicPath);
-// // }
-// mkDirByPathSync(publicPath);
-// //return filePath;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // define the home page route
 router.get('/', function (req, res) {
@@ -180,11 +29,66 @@ router.get('/add', function (req, res) {
     res.render('create_store')
 })
 
+router.post('/multi_image', function (req, res) {
+
+    var storeId = req.body.typeId;
+    let localPath = "";
+    if(req.body.type == "store_multi") {
+        localPath = config.default.store_images.replace(/{{store_id}}/gi, storeId);        
+    }
+
+    if(req.files) {
+        for(var i =0; i<req.files.storePhoto.length; i++) {
+            
+            let imageName = S(req.files.storePhoto[i].name).replaceAll(' ', '_').s;
+            let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
+            let dirPath = path.join(__dirname+'/../public/'+localPath);
+            let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
+                            
+            let sampleFile = req.files.storePhoto[i];
+
+            var storeIconData = new Object();
+            storeIconData.storeId = storeId;
+            storeIconData.dbImagePath = dbImagePath;
+            storeIconData.dbImageName = imageName.substring(0, imageName.indexOf('.'));
+            storeIconData.displayPriority = 0;
+            storeIconData.status = 1;
+
+            if (!fs.existsSync(dirPath)) {
+                mkdirp(dirPath, function (err) {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        sampleFile.mv(dirImagePath, function(err) {
+                            if (err)
+                              return res.status(500).send(err);
+                            uploadFile(dirImagePath, dbImagePath);
+                        });
+                    }
+                });            
+            } else {
+                sampleFile.mv(dirImagePath, function(err) {
+                    if (err)
+                      return res.status(500).send(err);
+                    uploadFile(dirImagePath, dbImagePath);
+                    //console.dir('File uploaded!');
+                });
+            }
+            StoresModel.saveStoreMultiImages(storeIconData
+            , function(err, result) {
+                //console.dir("Added store image");
+            });
+        }
+        var resData = new Object();
+        resData.success = true;
+        res.send(resData);
+    }
+});
 router.post('/changeStatus', function (req, res) {
-    console.dir(req.body);
+    //console.dir(req.body);
     //res.render('create_store')
     StoresModel.changeStatus(req.body, function(err, result) {
-        console.dir(result.affectedRows);
+        //console.dir(result.affectedRows);
         if(result.affectedRows) {
             var resData = new Object();
             resData.success = true;
@@ -208,7 +112,7 @@ router.post('/add', function (req, res) {
                 var storeId = result.insertId;
                 let imageName = S(req.files.store_icon.name).replaceAll(' ', '_').s;
                 let localPath = config.default.store_icon.replace(/{{store_id}}/gi, storeId);
-                let dbImagePath = S(localPath).replaceAll('images/', '').s+imageName;
+                let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
                 let dirPath = path.join(__dirname+'/../public/'+localPath);
                 let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
                                 

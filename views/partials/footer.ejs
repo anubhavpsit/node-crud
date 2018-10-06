@@ -12,11 +12,74 @@
       </div>
     </div>
   </div>
+
+
+<div class="modal fade" id="storeMultipleImages" tabindex="-1" role="dialog" aria-labelledby="storeMultipleImagesLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+            <form id="uploadForm"
+                enctype="multipart/form-data"
+                action="/stores/multi_image"
+                method="post">
+              <input type="file" name="storePhoto" multiple/>
+              <br>
+              <input type="text" readonly name="typeId" id="entityTypeId" value="" />
+              <br>
+              <input type="text" readonly name="type" id="entityType" value="" />
+              <input type="submit" id="uploadImagesBtn" value="Upload Store Images" name="submit">
+              <span id = "status"></span>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
+
 </body>
 <script type="text/javascript">
 $(document).ready(function() {
   console.dir("OK");
     var url = 'http://localhost:3001/';
+    $(".store_multi_images").on("click", function(e) {
+      e.preventDefault();
+      $("#entityTypeId").val($(this).data('store-id'));
+      $("#entityType").val($(this).data('type'));
+      $("#storeMultipleImages").modal({
+        backdrop: "static", //remove ability to close modal with click
+        keyboard: false, //remove option to close with keyboard
+        show: true //Display loader!
+      });
+    });
+
+     $('#uploadForm').submit(function() {
+        $("#storeMultipleImages").hide();
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+
+        $("#status").empty().text("File is uploading...");
+        $("#uploadImagesBtn").attr("disabled", true);
+        $(this).ajaxSubmit({
+
+            error: function(xhr) {
+                //$("#loadMe").modal("hide");
+                alert("Error Occoured");
+                //status('Error: ' + xhr.status);
+            },
+
+            success: function(response) {
+              console.log(response);
+              //$("#loadMe").modal("hide");
+              location.reload();
+              $("#status").empty().text(response);
+            }
+        });
+        return false;
+    });
+
     $(".edit_store_Status").on("click", function(e) {
       e.preventDefault();
       $("#loadMe").modal({

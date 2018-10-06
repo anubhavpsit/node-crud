@@ -124,11 +124,31 @@ function changeStatus(data, callback) {
     });
 }
 
+function saveStoreMultiImages(data, callback) {
+  
+    var postData = [
+        data.storeId,
+        data.dbImageName,
+        data.dbImagePath,
+        data.displayPriority,
+        data.status];
+
+    db.query('INSERT INTO store_images_mapping (\
+        store_id,image_name,image_file,\
+        display_priority, status) VALUES (?, ?, ?, ?, ?)', postData, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+      });
+}
+
+
+
 module.exports = {
     getData: getData,
     saveStoreData: saveStoreData,
     saveStoreIcon: saveStoreIcon,
-    changeStatus: changeStatus
+    changeStatus: changeStatus,
+    saveStoreMultiImages: saveStoreMultiImages
 }
 
 
