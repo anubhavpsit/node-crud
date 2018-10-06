@@ -29,6 +29,47 @@ router.get('/add', function (req, res) {
     res.render('create_store')
 })
 
+router.post('/single_image', function (req, res) {
+    var storeId = req.body.typeId;
+
+    if(req.files) {
+        let imageName = S(req.files.storeSinglePhoto.name).replaceAll(' ', '_').s;
+        let localPath = config.default.store_icon.replace(/{{store_id}}/gi, storeId);
+        let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
+        let dirPath = path.join(__dirname+'/../public/'+localPath);
+        let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
+        let sampleFile = req.files.storeSinglePhoto;
+
+        var storeIconData = new Object();
+        storeIconData.storeId = storeId;
+        storeIconData.dbImagePath = dbImagePath;
+        if (!fs.existsSync(dirPath)) {
+            mkdirp(dirPath, function (err) {
+                if (err) {
+                    console.error(err);
+                } else {
+                    sampleFile.mv(dirImagePath, function(err) {
+                        if (err)
+                          return res.status(500).send(err);
+                        uploadFile(dirImagePath, dbImagePath);
+                    });
+                }
+            });            
+        } else {
+            sampleFile.mv(dirImagePath, function(err) {
+                if (err)
+                  return res.status(500).send(err);
+                uploadFile(dirImagePath, dbImagePath);
+            });
+        }
+
+        StoresModel.saveStoreIcon(storeIconData, function(err, result) {
+            console.dir("Updated store icon");
+        });
+    }
+    setTimeout(function(){ res.redirect('/stores'); }, 2000);
+});
+
 router.post('/multi_image', function (req, res) {
 
     var storeId = req.body.typeId;

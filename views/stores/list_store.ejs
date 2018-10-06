@@ -25,7 +25,11 @@
                 <% for(var i=0; i < data.length; i++) { %>
                     <tr>
                         <th scope="row"><%= data[i].store_id %></th>
-                        <td><img src="<%= data[i].image %>" style="width:60px;" /></td>
+                        <td>
+<a class="dropdown-item edit_store_icon" data-store-status="1" data-type="store_icon" data-store-id="<%= data[i].store_id %>" id="edit_store_icon" href="javascript:void(0);">
+<img src="<%= data[i].image %>" style="width:60px;" />
+</a>
+                        </td>
                         <td><%= data[i].store_name %></td>
                         <td><%= data[i].cluster_id %></td>
                         <td><%= data[i].store_type_id %></td>
