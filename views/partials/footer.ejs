@@ -72,6 +72,41 @@
 $(document).ready(function() {
   console.dir("OK");
     var url = 'http://localhost:3001/';
+    $("#cluster_id").on('change', function(){
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+
+        var data = new Object();
+        data.clusterId = $(this).val();
+        $.ajax({
+          type: "GET",
+          url: url+'stores/getClusterFloor',
+          data: data,
+          success: function(data){
+            var floor_options = '';
+            for(var i =0; i<data.data.length; i++) {
+              floor_options += '<option value='+data.data[i].floor_number+'>';
+              floor_options += 'id => ' +data.data[i].id;
+              floor_options += '#floor_number => ' +data.data[i].floor_number;
+              floor_options += '#floor_alias => ' +data.data[i].floor_alias;
+              floor_options += '</option>';              
+            }
+            setTimeout(function(){
+              $("#loadMe").modal("hide");
+            }, 500);
+            $("#store_floor").html(floor_options);
+            $("#store_floor").attr("disabled", false);
+            $("#y_coordinates").attr("disabled", false);
+            $("#x_coordinates").attr("disabled", false);
+          },
+          error: function(data){
+          },
+          dataType: 'json'
+        });
+    });
 
     $(".edit_store_icon").on("click", function(e) {
       e.preventDefault();

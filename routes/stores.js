@@ -30,8 +30,31 @@ router.get('/', function (req, res) {
     });
 })
 
+router.get('/getClusterFloor', function (req, res) {
+    console.dir(req.query.clusterId);
+    var postData = new Object();
+    postData.clusterId = req.query.clusterId;
+    DbFunctionsModel.getClusterFloors(postData, function(err, result) {
+        var resData = new Object();
+        resData.success = true;
+        resData.data = result;
+        res.send(resData);
+    });
 
 
+    // var promise = loadDbData();
+    // promise.then( function(result) {
+    //     // console.dir("result");
+    //     // console.dir(result);
+    //     // yay! I got the result.
+    //     res.render('create_store', { data: result });
+    // }, function(error) {
+    //     // The promise was rejected with this error.
+    //     console.dir("error");
+    //     console.dir(error);
+    // });
+    // res.render('create_store');
+});
 
 router.get('/add', function (req, res) {
 

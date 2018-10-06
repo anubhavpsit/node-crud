@@ -114,8 +114,31 @@ function saveStoreData(data, callback) {
         store_name,store_type_id,company_id,\
         store_manager_name, store_owner_name, mobile_number, phone_number,\
         email, address1, address2, city, cluster_id, gps_lat, gps_long) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
-        if (err) throw err
+        if (err) {
+            throw err;
+        } else {
+            console.dir("INSERT result");
+            console.dir(result.insertId);
+            console.dir(data);
+            console.dir(data.cluster_id);
+            var floorData = [
+                data.cluster_id,
+                result.insertId,
+                data.store_floor,
+                data.x_coordinates,
+                data.y_coordinates,
+                1
+            ];
+
+            db.query('INSERT INTO store_floor_details (cluster_id, store_id, floor_number, x_axis, y_axis, status) VALUES (?, ?, ?, ?, ?, ?)', floorData, function(err, result) {
+//                console.dir(result);
+                if (err) {
+                    // throw err
+                } 
+            });
+            // console.log(a.sql);
             callback(err, result);
+        }
       });
 }
 

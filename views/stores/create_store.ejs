@@ -18,7 +18,7 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                 <label for="inputEmail4">Store Name</label>
-                <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name">
+                <input type="text" class="form-control" id="store_name" name="store_name" placeholder="Store Name" value="test">
                 </div>
                 <div class="form-group col-md-6">
                 <label for="inputPassword4">Store Type</label>
@@ -49,6 +49,33 @@
                         <% } %>
                     </select>
                 </div>
+                <div class="form-group col-md-6">
+                    <label for="inputPassword4">Store Floor</label>
+                    <select id="store_floor" name="store_floor" disabled="true" class="form-control">
+                        <option selected value="0">Choose...</option>
+                    </select>
+                </div>    
+                <div class="form-group col-md-3">
+                    <label for="inputPassword4">X Coordinates</label>
+                    <input type="text" class="form-control" disabled="true"  id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="55">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="inputEmail4">Y Coordinates</label>
+                    <input type="text" class="form-control" disabled="true" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="56">
+                </div>
+            </div>
+            <div class="form-row">
+                    <h3>Store Location</h3>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Latitude</label>
+                    <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude like 27.00" value="20.00">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Longitude</label>
+                    <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Longitude like 27.00" value="22.00">
+                </div>
             </div>
             <div class="form-row">
                     <h3>Store Owner Details</h3>                
@@ -56,23 +83,23 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Store Manager Name</label>
-                    <input type="text" class="form-control" id="store_manager_name" name="store_manager_name" placeholder="Store Manager Name">
+                    <input type="text" class="form-control" id="store_manager_name" name="store_manager_name" placeholder="Store Manager Name" value="Anubhav">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Mobile number</label>
-                    <input type="text" class="form-control" id="store_mobile_number" name="store_mobile_number" placeholder="Mobile number">
+                    <input type="text" class="form-control" id="store_mobile_number" name="store_mobile_number" placeholder="Mobile number" value="1231231231">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Store Owner Name</label>
-                    <input type="text" class="form-control"  id="store_owner_name" name="store_owner_name" placeholder="Store Owner Name">
+                    <input type="text" class="form-control"  id="store_owner_name" name="store_owner_name" placeholder="Store Owner Name" value="Tiwari">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Phone number</label>
-                    <input type="text" class="form-control" id="store_phone_number" name="store_phone_number" placeholder="Phone number">
+                    <input type="text" class="form-control" id="store_phone_number" name="store_phone_number" placeholder="Phone number" value="4564564564">
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputEmail4">Email</label>
-                    <input type="text" class="form-control" id="store_email" name="store_email" placeholder="Store Email">
+                    <input type="text" class="form-control" id="store_email" name="store_email" placeholder="Store Email" value="anubhav@gmail.com">
                 </div>
             </div>
             <div class="form-row">
@@ -81,27 +108,27 @@
             <div class="form-row">
                 <div class="form-group col-md-5">
                     <label for="inputEmail4">Address 1</label>
-                    <input type="text" class="form-control" id="address_1" name="address_1" placeholder="Address 1">
+                    <input type="text" class="form-control" id="address_1" name="address_1" placeholder="Address 1" value="My Address line 1">
                 </div>
                 <div class="form-group col-md-5">
                     <label for="inputEmail4">Address 2</label>
-                    <input type="text" class="form-control" id="address_2" name="address_2" placeholder="Address 2">
+                    <input type="text" class="form-control" id="address_2" name="address_2" placeholder="Address 2" value="My Address Line 2">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="inputZip">Pin Code</label>
-                    <input type="text" class="form-control" id="pin_code" name="pin_code">
+                    <input type="text" class="form-control" id="pin_code" name="pin_code" value="123123">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="inputCity">City</label>
-                    <input type="text" class="form-control" id="city" name="city">
+                    <input type="text" class="form-control" id="city" name="city" value="Noida">
                 </div>
                 <div class="form-group col-md-4">
                 <label for="inputState">State</label>
                 <select id="state" name="state" class="form-control">
                     <option selected value="0">Choose...</option>
-                    <option value="1">New Delhi</option>
+                    <option value="1" selected>New Delhi</option>
                     <option value="2">Uttar Pradesh</option>
                     <option value="3">Haryana</option>
                 </select>
@@ -110,7 +137,7 @@
                     <label for="inputState">Country</label>
                     <select id="country" name="country" class="form-control">
                         <option selected value="0">Choose...</option>
-                        <option value="1">India</option>
+                        <option value="1" selected>India</option>
                     </select>
                 </div>
             </div>
@@ -120,28 +147,6 @@
             <div class="form-group col-md-4 custom-file">
                 <input type="file" name="store_icon" class="custom-file-input" id="customFile">
                 <label class="custom-file-label" for="customFile">Choose file</label>
-            </div>
-            <div class="mx-auto">&nbsp;</div>
-            <div class="form-row">
-                    <h3>Store Location</h3>                
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <label for="inputEmail4">Latitude</label>
-                    <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="inputEmail4">Longitude</label>
-                    <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Longitude">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="inputEmail4">X Coordinates</label>
-                    <input type="text" class="form-control"  id="x_coordinates" name="x_coordinates" placeholder="X Coordinates">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="inputEmail4">Y Coordinates</label>
-                    <input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates">
-                </div>
             </div>
 
             <div class="mx-auto">&nbsp;</div>

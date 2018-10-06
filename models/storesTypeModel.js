@@ -20,8 +20,15 @@ function getCompanyList(callback) {
     });
 }
 
+function getClusterFloors(data, callback) {
+    db.query('select id,cluster_id,floor_number,floor_alias FROM cluster_floor_details where cluster_id = '+data.clusterId+' order by id asc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
 module.exports = {
     getStoreTypeData: getStoreTypeData,
     getClusterList: getClusterList,
-    getCompanyList: getCompanyList
+    getCompanyList: getCompanyList,
+    getClusterFloors: getClusterFloors
 }
