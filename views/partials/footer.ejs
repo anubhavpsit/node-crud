@@ -56,6 +56,17 @@
     </div>
 </div>
 
+
+<div class="modal fade" style="overflow:scroll;" id="viewAllImages" tabindex="-1" role="dialog" aria-labelledby="viewAllImagesLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+            <div id="store_all_images" class="row">Please wait</div>
+        </div>
+      </div>
+    </div>
+</div>
+
 </body>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -100,7 +111,61 @@ $(document).ready(function() {
         return false;
     });
 
-
+    
+    $(".view_store_multi_images").on("click", function(e) {
+      e.preventDefault();
+//      $("#entityTypeId").val($(this).data('store-id'));
+//      $("#entityType").val($(this).data('type'));
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+        var data = new Object();
+        data.storeId = $(this).data('store-id');
+        console.dir(data);
+        $.ajax({
+        type: "GET",
+        url: url+'stores/getAllImages',
+        data: data,
+        success: function(data){
+            console.dir(data);
+            if(data.success) {
+                //location.reload();
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                    var store_all_images_html = '';
+                    store_all_images_html += '<div class="col-lg-12">';
+                    for(var i = 0; i<data.data.length; i++) {
+                        console.dir(data.data[i]);
+                        store_all_images_html += '<div class="col-sm-4" style="float:left;">';
+                        store_all_images_html += '<div class="card">';
+                        store_all_images_html += '<img class="card-img-top" src="'+data.data[i].image_file+'" alt="Card image cap">';
+                        store_all_images_html += '<div class="card-body">';
+                        store_all_images_html += '<h5 class="card-title">'+data.data[i].image_name+'</h5>';
+                        store_all_images_html += '<a href="#" class="btn btn-primary">'+data.data[i].status+'</a>';
+                        store_all_images_html += '</div>';
+                        store_all_images_html += '</div>';
+                        store_all_images_html += '</div>';
+                    }
+                    store_all_images_html += '</div>';
+                    $("#store_all_images").html(store_all_images_html);
+                    $("#viewAllImages").modal({
+                      backdrop: "static", //remove ability to close modal with click
+                      keyboard: false, //remove option to close with keyboard
+                      show: true //Display loader!
+                    });
+                }, 1000);
+            } else {
+                alert("Some error occoured in updating status");
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 500);
+            }
+        },
+        dataType: 'json'
+        });
+    });
 
     $(".store_multi_images").on("click", function(e) {
       e.preventDefault();

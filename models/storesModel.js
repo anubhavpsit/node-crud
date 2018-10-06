@@ -106,12 +106,14 @@ function saveStoreData(data, callback) {
         data.address_1,
         data.address_2,
         data.city,
-        data.cluster_id];
+        data.cluster_id,
+        data.latitude,
+        data.longitude];
 
     db.query('INSERT INTO store_master (\
         store_name,store_type_id,company_id,\
         store_manager_name, store_owner_name, mobile_number, phone_number,\
-        email, address1, address2, city, cluster_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
+        email, address1, address2, city, cluster_id, gps_lat, gps_long) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
         if (err) throw err
             callback(err, result);
       });
@@ -124,6 +126,22 @@ function changeStatus(data, callback) {
     });
 }
 
+function getStoreImages(data, callback) {
+    db.query('SELECT * FROM store_images_mapping order by id desc', function(err, res, fields) {
+        //console.dir(res.image);
+        for(var i = 0; i<res.length; i++) {
+            //console.dir(res[i].image);
+            if((res[i].image_file == null) || (res[i].image_file == '')) {
+                res[i].image_file = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+            } else {
+                //let s3Url = config.default.s3url +res[i].image;
+                res[i].image_file = config.default.s3url +res[i].image_file;
+            }
+            //res[i].image = s3Url;
+        }
+        callback(err, res);
+    });
+}
 function saveStoreMultiImages(data, callback) {
   
     var postData = [
@@ -148,7 +166,8 @@ module.exports = {
     saveStoreData: saveStoreData,
     saveStoreIcon: saveStoreIcon,
     changeStatus: changeStatus,
-    saveStoreMultiImages: saveStoreMultiImages
+    saveStoreMultiImages: saveStoreMultiImages,
+    getStoreImages: getStoreImages
 }
 
 

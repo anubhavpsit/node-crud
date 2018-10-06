@@ -142,12 +142,21 @@ router.post('/changeStatus', function (req, res) {
     });
 })
 
-router.post('/add', function (req, res) {
+router.get('/getAllImages', function (req, res) {
 
+    var postData = new Object();
+    postData.storeId = req.query.storeId;
+    StoresModel.getStoreImages(postData, function(err, result) {
+        var resData = new Object();
+        resData.success = true;
+        resData.data = result;
+        res.send(resData);
+    });
+});
+
+router.post('/add', function (req, res) {
+console.dir(req.body);
     StoresModel.saveStoreData(req.body, function(err, result) {
-        //res.render('api', { data: result, title: "Test API Output" });
-        console.dir("Store Added");
-        console.dir(result);
         if(result.insertId) {
             if(req.files) {
                 var storeId = result.insertId;
