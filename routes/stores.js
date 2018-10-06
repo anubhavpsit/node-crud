@@ -8,8 +8,15 @@ var fs = require("fs");
 var path = require("path");
 var mkdirp = require('mkdirp');
 
+//var splash_screen = require('splash-screen');
+//import { enable, destory } from 'splash-screen';
+//splash_screen.enable('tailing');
+//enable('tailing');
 
 
+//var loadingSpinner = require('loading-spinner');
+//var please_wait = require('please-wait');
+//$("#load_me_baby").click();
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3({
     accessKeyId: 'AKIAIQHJUN2GXCSYBIXA', //process.env.AWS_ACCESS_KEY,
@@ -17,6 +24,19 @@ var s3 = new AWS.S3({
     version: '2006-03-01',
     region: 'ap-south-1'
 });
+
+// loadingSpinner.start();
+
+// setTimeout(function(){
+//     loadingSpinner.stop();
+// }, 5000);
+
+// please_wait.pleaseWait({
+//     logo: "assets/images/pathgather.png",
+//     backgroundColor: '#f46d3b',
+//     loadingHtml: "<div class='sk-spinner sk-spinner-wave'><div class='sk-rect1'></div><div class='sk-rect2'></div><div class='sk-rect3'></div><div class='sk-rect4'></div><div class='sk-rect5'></div></div>"
+// });
+
 
 
 // var storeId = 143;
@@ -158,6 +178,23 @@ router.get('/', function (req, res) {
 
 router.get('/add', function (req, res) {
     res.render('create_store')
+})
+
+router.post('/changeStatus', function (req, res) {
+    console.dir(req.body);
+    //res.render('create_store')
+    StoresModel.changeStatus(req.body, function(err, result) {
+        console.dir(result.affectedRows);
+        if(result.affectedRows) {
+            var resData = new Object();
+            resData.success = true;
+            res.send(resData);
+        } else {
+            var resData = new Object();
+            resData.success = false;
+            res.send(resData);
+        }
+    });
 })
 
 router.post('/add', function (req, res) {

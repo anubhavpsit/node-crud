@@ -8,7 +8,7 @@ var path = require('path');
 //var Busboy = require('busboy');
 var db = require('./models/db_connection');
 
-
+//app.use(require('express-jquery')('/jquery.js'));
 app.use(fileUpload());
 // var mysql = require('mysql')
 // var connection = mysql.createConnection({

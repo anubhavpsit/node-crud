@@ -117,10 +117,18 @@ function saveStoreData(data, callback) {
       });
 }
 
+function changeStatus(data, callback) {
+    db.query("UPDATE store_master set status = '"+data.status+"' WHERE store_id = " + data.storeId, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+    });
+}
+
 module.exports = {
     getData: getData,
     saveStoreData: saveStoreData,
-    saveStoreIcon: saveStoreIcon
+    saveStoreIcon: saveStoreIcon,
+    changeStatus: changeStatus
 }
 
 
