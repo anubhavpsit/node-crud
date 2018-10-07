@@ -216,7 +216,8 @@ router.post('/add', function (req, res) {
     //console.dir(req.body);
     StoresModel.saveStoreData(req.body, function(err, result) {
         if(result.insertId) {
-            if(req.files) {
+            if((req.files) && (typeof req.files.store_icon != "undefined")) {
+
                 var storeId = result.insertId;
                 let imageName = S(req.files.store_icon.name).replaceAll(' ', '_').s;
                 let localPath = config.default.store_icon.replace(/{{store_id}}/gi, storeId);
