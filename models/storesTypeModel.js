@@ -26,9 +26,23 @@ function getClusterFloors(data, callback) {
     });
 }
 
+function getCategoryList(callback) {
+    db.query('SELECT * FROM category_master where status = 1 order by id desc', function(err, res, fields) {
+        callback(err, res);
+    });    
+}
+
+function getSubCategoryList(data, callback) {
+    db.query('SELECT * FROM sub_category_master where category_code = '+data.categoryId+' order by sub_category_code desc', function(err, res, fields) {
+        callback(err, res);
+    });    
+}
+
 module.exports = {
     getStoreTypeData: getStoreTypeData,
     getClusterList: getClusterList,
     getCompanyList: getCompanyList,
-    getClusterFloors: getClusterFloors
+    getClusterFloors: getClusterFloors,
+    getCategoryList: getCategoryList,
+    getSubCategoryList: getSubCategoryList
 }

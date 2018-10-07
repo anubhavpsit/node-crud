@@ -30,6 +30,22 @@ router.get('/', function (req, res) {
     });
 })
 
+router.get('/getSubcategoryByCategoryId', function (req, res) {
+    // StoresModel.getData(function(err, result) {
+    //     //res.render('api', { data: result, title: "Test API Output" });
+    //     //console.dir(result);
+    //     res.render('list_store', { data: result })
+    // });
+    var postData = new Object();
+    postData.categoryId = req.query.categoryId;
+    DbFunctionsModel.getSubCategoryList(postData, function(err, result) {
+        var resData = new Object();
+        resData.success = true;
+        resData.data = result;
+        res.send(resData);
+    });
+})
+
 router.get('/getClusterFloor', function (req, res) {
     var postData = new Object();
     postData.clusterId = req.query.clusterId;
@@ -197,7 +213,7 @@ router.get('/getAllImages', function (req, res) {
 });
 
 router.post('/add', function (req, res) {
-//console.dir(req.body);
+    //console.dir(req.body);
     StoresModel.saveStoreData(req.body, function(err, result) {
         if(result.insertId) {
             if(req.files) {
@@ -298,6 +314,8 @@ function loadDbData()
         var storeTypes = [];
         var clustersList = [];
         var companyList = [];
+        var categoryList = [];
+        
         DbFunctionsModel.getStoreTypeData(function(err, result) {
             for (var i = 0; i< result.length; i++) {
                 var d = new Object();
@@ -324,7 +342,17 @@ function loadDbData()
                         companyList.push(d);
                     }
                     data.companyList = companyList;
-                    resolve(data);
+                    
+                    DbFunctionsModel.getCategoryList(function(err, result) {
+                        for (var i = 0; i< result.length; i++) {
+                            var d = new Object();
+                            d.id = result[i].id;
+                            d.category_name = result[i].category_name;
+                            categoryList.push(d);
+                        }
+                        data.categoryList = categoryList;
+                        resolve(data);
+                    });
                 });
             });
         });

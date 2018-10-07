@@ -2,70 +2,6 @@ var db = require('./db_connection');
 var config = require('../config');
 var fs = require("fs");
 
-// db.query('SELECT * FROM store_master', function(err, result) {
-//     if (err) throw err;
-//     console.dir("AAAAAAAAAA");
-//     console.dir(result);
-//   });
-
-
-// var stores = {
-//         getAllStores: () => {
-//             db.query('SELECT * FROM store_master', function(err, result) {
-//                 if (err) throw err;
-//                 //console.dir("BBBBBBBBBBBBBBBCCCCCCCCCCCCC");
-//                 //console.dir(result);
-//                 return result;
-//             });
-//         },
-//         getActiveCompany: () => {
-//             var a = [1,2,3,4,5,6];
-//             return a;
-//         },
-//     };
-
-
-// exports.getAllStores = function(done) {
-//     db.get().query('SELECT * FROM store_master', function (err, rows) {
-//       if (err) return done(err)
-//       done(null, rows)
-//     })
-// }
-
-// exports.getAllStores = function() {
-//     db.get().query('SELECT * FROM store_master', function (err, rows) {
-//       if (err) throw err;
-//       return rows;
-//     })
-// }
-
-
-
-
-// var data = {
-//     getAllStores: getAllStores(db)
-// }
-
-// function a(){
-//     return 55;
-// }
-// function getAllStores(db) {
-//     var data = 'AASAS';
-//    db.query('SELECT store_name FROM store_master WHERE store_id = 1', function(err, result) {
-//         if (err) throw err;
-//         // console.dir("AAAAAAAAAA");
-//         //console.dir(result);
-//         data = result;
-//     });
-//     return data;
-// }
-
-
-// console.dir("B");
-// console.dir(data);
-// console.dir("B");
-
-
 function getData(callback) {
     db.query('SELECT * FROM store_master order by store_id desc', function(err, res, fields) {
         //console.dir(res.image);
@@ -108,30 +44,51 @@ function saveStoreData(data, callback) {
         data.city,
         data.cluster_id,
         data.latitude,
-        data.longitude];
+        data.longitude,
+        data.category_id
+    ];
 
     db.query('INSERT INTO store_master (\
         store_name,store_type_id,company_id,\
         store_manager_name, store_owner_name, mobile_number, phone_number,\
-        email, address1, address2, city, cluster_id, gps_lat, gps_long) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
+        email, address1, address2, city, cluster_id, gps_lat, gps_long, category_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
         if (err) {
             throw err;
         } else {
-            var floorData = [
-                data.cluster_id,
-                result.insertId,
-                data.store_floor,
-                data.x_coordinates,
-                data.y_coordinates,
-                1
-            ];
+            if(data.cluster_id > 0) {
+                var floorData = [
+                    data.cluster_id,
+                    result.insertId,
+                    data.store_floor,
+                    data.x_coordinates,
+                    data.y_coordinates,
+                    1
+                ];
+    
+                db.query('INSERT INTO store_floor_details (cluster_id, store_id, floor_number, x_axis, y_axis, status) VALUES (?, ?, ?, ?, ?, ?)', floorData, function(err, result) {
+    //                console.dir(result);
+                    if (err) {
+                        // throw err
+                        console.dir("Unable to insert in store_floor_details");
+                    } 
+                });
+            }
 
-            db.query('INSERT INTO store_floor_details (cluster_id, store_id, floor_number, x_axis, y_axis, status) VALUES (?, ?, ?, ?, ?, ?)', floorData, function(err, result) {
-//                console.dir(result);
-                if (err) {
-                    // throw err
-                } 
-            });
+            if( (typeof data.sub_category != "undefined") && (data.sub_category.length > 0)) {
+                for(var i=0; i < data.sub_category.length; i++) {
+                    var subCategoryData = [
+                        result.insertId,
+                        data.category_id,
+                        data.sub_category[i]
+                    ];
+                    db.query('INSERT INTO store_category_sub_category_mapping (store_id, category_code, sub_category_code) VALUES (?, ?, ?)', subCategoryData, function(err, result) {
+                        if (err) {
+                            console.dir("Unable to insert in store_category_sub_category_mapping");
+                            // throw err
+                        }
+                    });
+                }
+            }
             // console.log(a.sql);
             callback(err, result);
         }

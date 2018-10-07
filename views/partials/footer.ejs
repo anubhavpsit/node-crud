@@ -72,6 +72,40 @@
 $(document).ready(function() {
   console.dir("OK");
     var url = 'http://localhost:3001/';
+
+    $("#category_id").on('change', function(){
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+        var categoryData = new Object();
+        categoryData.categoryId = $(this).val();
+
+        $.ajax({
+          type: "GET",
+          url: url+'stores/getSubcategoryByCategoryId',
+          data: categoryData,
+          success: function(data){
+            var sub_category_options = '';
+            if(data.data.length > 0) {
+              for(var i =0; i<data.data.length; i++) {
+                sub_category_options += '<option value='+data.data[i].sub_category_code+'>';
+                sub_category_options += data.data[i].sub_category_name;
+                sub_category_options += '</option>';
+              }
+              $("#sub_category").html(sub_category_options);
+              $("#sub_category").attr("disabled", false);
+            }
+            setTimeout(function(){
+              $("#loadMe").modal("hide");
+            }, 500);
+          },
+          error: function(data){
+          },
+          dataType: 'json'
+        });        
+    });        
     $("#cluster_id").on('change', function(){
         $("#loadMe").modal({
           backdrop: "static", //remove ability to close modal with click
