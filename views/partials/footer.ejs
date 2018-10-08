@@ -205,18 +205,23 @@ $(document).ready(function() {
                     $("#loadMe").modal("hide");
                     var store_all_images_html = '';
                     store_all_images_html += '<div class="col-lg-12">';
-                    for(var i = 0; i<data.data.length; i++) {
-                        console.dir(data.data[i]);
-                        store_all_images_html += '<div class="col-sm-4" style="float:left;">';
-                        store_all_images_html += '<div class="card">';
-                        store_all_images_html += '<img class="card-img-top" src="'+data.data[i].image_file+'" alt="Card image cap">';
-                        store_all_images_html += '<div class="card-body">';
-                        store_all_images_html += '<h5 class="card-title">'+data.data[i].image_name+'</h5>';
-                        store_all_images_html += '<a href="#" class="btn btn-primary">'+data.data[i].status+'</a>';
-                        store_all_images_html += '</div>';
-                        store_all_images_html += '</div>';
-                        store_all_images_html += '</div>';
-                    }
+                    if(data.data.length > 0) {
+                      for(var i = 0; i<data.data.length; i++) {
+                          console.dir(data.data[i]);
+                          store_all_images_html += '<div class="col-sm-4" style="float:left;">';
+                          store_all_images_html += '<div class="card">';
+                          store_all_images_html += '<img class="card-img-top" src="'+data.data[i].image_file+'" alt="Card image cap">';
+                          store_all_images_html += '<div class="card-body">';
+                          store_all_images_html += '<h5 class="card-title">'+data.data[i].image_name+'</h5>';
+                          store_all_images_html += '<a href="#" class="btn btn-primary">'+data.data[i].status+'</a>';
+                          store_all_images_html += '</div>';
+                          store_all_images_html += '</div>';
+                          store_all_images_html += '</div>';
+                      }
+                    } else {
+                          store_all_images_html += 'No Images Found';
+                    } 
+
                     store_all_images_html += '</div>';
                     $("#store_all_images").html(store_all_images_html);
                     $("#viewAllImages").modal({

@@ -103,7 +103,7 @@ function changeStatus(data, callback) {
 }
 
 function getStoreImages(data, callback) {
-    db.query('SELECT * FROM store_images_mapping order by id desc', function(err, res, fields) {
+    db.query('SELECT * FROM store_images_mapping WHERE store_id = '+data.storeId+' order by id desc', function(err, res, fields) {
         //console.dir(res.image);
         for(var i = 0; i<res.length; i++) {
             //console.dir(res[i].image);
