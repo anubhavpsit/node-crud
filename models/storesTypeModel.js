@@ -188,6 +188,25 @@ function saveMultiImages(data, callback) {
     }
 }
 
+function getAllOffersList(callback) {
+    db.query('SELECT a.*,b.offer_type as offer_type_text,c.offer_category as offer_category_text FROM advertisment_master a, offer_type b, offer_category_master c where a.offer_type_id = b.id AND a.offer_category_id = c.offer_category_id', function(err, res, fields) {
+        for(var i = 0; i<res.length; i++) {
+            if((res[i].banner_image == null) || (res[i].banner_image == '')) {
+                res[i].banner_image = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+            } else {
+                res[i].banner_image = config.default.s3url +res[i].banner_image;
+            }
+            if((res[i].image_url == null) || (res[i].image_url == '')) {
+                res[i].image_url = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+            } else {
+                res[i].image_url = config.default.s3url +res[i].image_url;
+            }
+        }
+
+        callback(err, res);
+    });
+}
+
 module.exports = {
     getStoreTypeData: getStoreTypeData,
     getClusterList: getClusterList,
@@ -202,5 +221,6 @@ module.exports = {
     changeStatus: changeStatus,
     saveSingleIcon: saveSingleIcon,
     getAllImages: getAllImages,
-    saveMultiImages: saveMultiImages
+    saveMultiImages: saveMultiImages,
+    getAllOffersList: getAllOffersList
 }

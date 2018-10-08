@@ -12,6 +12,7 @@
   "author": "ani.anubhav@gmail.com",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.6.1",
     "aws-sdk": "^2.329.0",
     "busboy": "^0.2.14",
     "connect-busboy": "0.0.2",
@@ -20,6 +21,7 @@
     "express-fileupload": "^1.0.0-alpha.1",
     "loading-spinner": "^1.2.0",
     "mkdirp": "^0.5.1",
+    "moment": "^2.22.2",
     "mysql": "^2.16.0",
     "please-wait": "0.0.5",
     "pug": "^2.0.3",

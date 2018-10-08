@@ -11,11 +11,11 @@ var StoresModel = require('../models/storesModel');
 var DbFunctionsModel = require('../models/storesTypeModel');
 
 
-
+config.default.aws_secret_key
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3({
-    accessKeyId: 'AKIAIQHJUN2GXCSYBIXA', //process.env.AWS_ACCESS_KEY,
-    secretAccessKey: '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',
+    accessKeyId: config.default.aws_access_key, //process.env.AWS_ACCESS_KEY,
+    secretAccessKey: config.default.aws_secret_key,
     version: '2006-03-01',
     region: 'ap-south-1'
 });
@@ -191,7 +191,7 @@ router.post('/multi_image', function (req, res) {
     var storeId = req.body.typeId;
     let localPath = "";
     if(req.body.type == "store_multi") {
-        localPath = config.default.store_images.replace(/{{store_id}}/gi, storeId);        
+        localPath = config.default.store_images.replace(/{{store_id}}/gi, storeId);
     }
 
     if(req.files) {
