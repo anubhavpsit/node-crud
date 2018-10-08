@@ -41,11 +41,40 @@
     </div>
 </div>
 
+<div class="modal fade" id="multipleImages" tabindex="-1" role="dialog" aria-labelledby="multipleImagesLabel">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Product Multiple Images</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+            <form id="multiUploadForm"
+                enctype="multipart/form-data"
+                action="/stores/upload_multi_image"
+                method="post">
+              <input type="file" name="multiPhotos" multiple/>
+              <br>
+              <input type="text" readonly name="parentId" id="multiEntityParentId" value="" />
+              <br>
+              <input type="text" readonly name="typeId" id="multiEntityTypeId" value="" />
+              <br>
+              <input type="text" readonly name="type" id="multiEntityType" value="" />
+              <input type="submit" id="uploadMultiImagesBtn" value="Upload Product Images" name="submit">
+              <span id = "multi_image_status"></span>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+
 <div class="modal fade" id="storeSingleImage" tabindex="-1" role="dialog" aria-labelledby="storeSingleImageLabel">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Store Icon</h5>
+          <h5 class="modal-title">Add Icon</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -58,6 +87,8 @@
               <input type="file" name="storeSinglePhoto"/>
               <br>
               <input type="text" readonly name="typeId" id="singleEntityTypeId" value="" />
+              <br>
+              <input type="text" readonly name="entityparentId" value="0" id="singleEntityparentId" value="" />
               <br>
               <input type="text" readonly name="type" id="singleEntityType" value="" />
               <input type="submit" id="uploadSingleImageBtn" value="Upload Store Icon" name="submit">
@@ -73,7 +104,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">View Store Multiple Images</h5>
+          <h5 class="modal-title">View All Multiple Images</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -160,10 +191,12 @@ $(document).ready(function() {
         });
     });
 
-    $(".edit_store_icon").on("click", function(e) {
+    $(".edit_store_icon, .edit_product_icon").on("click", function(e) {
       e.preventDefault();
-      $("#singleEntityTypeId").val($(this).data('store-id'));
+      $("#singleEntityTypeId").val($(this).data('id'));
       $("#singleEntityType").val($(this).data('type'));
+      $("#singleEntityparentId").val($(this).data('parent-id'));
+      
       $("#storeSingleImage").modal({
         backdrop: "static", //remove ability to close modal with click
         keyboard: false, //remove option to close with keyboard
@@ -185,12 +218,13 @@ $(document).ready(function() {
 
             error: function(xhr) {
                 $("#loadMe").modal("hide");
+                console.dir(xhr);
                 alert("Error Occoured");
                 //status('Error: ' + xhr.status);
             },
 
             success: function(response) {
-              console.log(response);
+              //console.log(response);
               //$("#loadMe").modal("hide");
               location.reload();
             }
@@ -199,24 +233,24 @@ $(document).ready(function() {
     });
 
     
-    $(".view_store_multi_images").on("click", function(e) {
+    $(".view_multi_images, .view_product_multi_images").on("click", function(e) {
       e.preventDefault();
-//      $("#entityTypeId").val($(this).data('store-id'));
-//      $("#entityType").val($(this).data('type'));
         $("#loadMe").modal({
           backdrop: "static", //remove ability to close modal with click
           keyboard: false, //remove option to close with keyboard
           show: true //Display loader!
         });
         var data = new Object();
-        data.storeId = $(this).data('store-id');
+        data.typeId = $(this).data('id');
+        data.parentId = $(this).data('parent-id');
+        data.type = $(this).data('type');
         console.dir(data);
         $.ajax({
         type: "GET",
         url: url+'stores/getAllImages',
         data: data,
         success: function(data){
-            console.dir(data);
+            //console.dir(data);
             if(data.success) {
                 //location.reload();
                 setTimeout(function() {
@@ -270,6 +304,43 @@ $(document).ready(function() {
       });
     });
 
+    $(".product_multi_images").on("click", function(e) {
+      e.preventDefault();
+      $("#multiEntityTypeId").val($(this).data('id'));
+      $("#multiEntityType").val($(this).data('type'));
+      $("#multiEntityParentId").val($(this).data('parent-id'));
+      
+      $("#multipleImages").modal({
+        backdrop: "static", //remove ability to close modal with click
+        keyboard: false, //remove option to close with keyboard
+        show: true //Display loader!
+      });
+    });
+      
+      $('#multiUploadForm').submit(function(){
+        $("#multipleImages").hide();
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+        $("#multi_image_status").empty().text("File is uploading...");
+        $("#uploadMultiImagesBtn").attr("disabled", true);
+        $(this).ajaxSubmit({
+
+            error: function(xhr) {
+                alert("Error Uploading Multiple Images");
+            },
+
+            success: function(response) {
+              $("#multi_image_status").empty().text(response);
+              location.reload();
+            }
+        });
+        return false;
+        
+      });
+
      $('#uploadForm').submit(function() {
         $("#storeMultipleImages").hide();
         $("#loadMe").modal({
@@ -290,6 +361,7 @@ $(document).ready(function() {
 
             success: function(response) {
               console.log(response);
+              alert("AAA");
               //$("#loadMe").modal("hide");
               location.reload();
               $("#status").empty().text(response);

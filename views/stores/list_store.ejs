@@ -26,7 +26,7 @@
                     <tr>
                         <th scope="row"><%= data[i].store_id %></th>
                         <td>
-<a class="dropdown-item edit_store_icon" data-store-status="1" data-type="store_icon" data-store-id="<%= data[i].store_id %>" id="edit_store_icon" href="javascript:void(0);">
+<a class="dropdown-item edit_store_icon" data-store-status="1" data-type="store_icon" data-id="<%= data[i].store_id %>" data-parent-id="0" id="edit_store_icon" href="javascript:void(0);">
 <img src="<%= data[i].image %>" style="width:60px;" />
 </a>
                         </td>
@@ -45,7 +45,7 @@
                                         <a class="dropdown-item edit_store_Status" data-store-status="0" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Inactive</a>
                                         <a class="dropdown-item edit_store_Status" data-store-status="2" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Pending</a>
                                         <div class="dropdown-header">Images</div>
-                                        <a class="dropdown-item view_store_multi_images" data-type="store_multi" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">View Store All Images</a>
+                                        <a class="dropdown-item view_multi_images" data-type="store_multi" data-parent-id="0" data-id="<%= data[i].store_id %>" href="javascript:void(0);">View Store All Images</a>
                                         <a class="dropdown-item store_multi_images" data-type="store_multi" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Add Store All Image</a>
 
                                         <div class="dropdown-header">Product</div>

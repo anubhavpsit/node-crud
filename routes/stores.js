@@ -74,44 +74,116 @@ router.get('/add', function (req, res) {
 });
 
 router.post('/single_image', function (req, res) {
-    var storeId = req.body.typeId;
 
-    if(req.files) {
-        let imageName = S(req.files.storeSinglePhoto.name).replaceAll(' ', '_').s;
-        let localPath = config.default.store_icon.replace(/{{store_id}}/gi, storeId);
-        let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
-        let dirPath = path.join(__dirname+'/../public/'+localPath);
-        let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
-        let sampleFile = req.files.storeSinglePhoto;
+    let typeId = req.body.typeId;
+    let imageName = S(req.files.storeSinglePhoto.name).replaceAll(' ', '_').s;
+    let localPath = '';
+    let redirectUrl = '';
+    if(req.body.type == "product_icon") {
+        localPath = config.default.product_icon.replace(/{{product_id}}/gi, typeId);
+        redirectUrl = 'stores/productsList/'+req.body.entityparentId;
+    } else {
+        localPath = config.default.store_icon.replace(/{{store_id}}/gi, typeId);
+        redirectUrl = '/stores';
+    }
 
-        var storeIconData = new Object();
-        storeIconData.storeId = storeId;
-        storeIconData.dbImagePath = dbImagePath;
-        if (!fs.existsSync(dirPath)) {
-            mkdirp(dirPath, function (err) {
-                if (err) {
-                    console.error(err);
-                } else {
-                    sampleFile.mv(dirImagePath, function(err) {
-                        if (err)
-                          return res.status(500).send(err);
-                        uploadFile(dirImagePath, dbImagePath);
-                    });
-                }
-            });            
-        } else {
-            sampleFile.mv(dirImagePath, function(err) {
-                if (err)
-                  return res.status(500).send(err);
-                uploadFile(dirImagePath, dbImagePath);
-            });
-        }
-
-        StoresModel.saveStoreIcon(storeIconData, function(err, result) {
-            console.dir("Updated store icon");
+    let dirPath = path.join(__dirname+'/../public/'+localPath);
+    let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
+    let sampleFile = req.files.storeSinglePhoto;
+    let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
+    var storeIconData = new Object();
+    storeIconData.type = req.body.type;
+    storeIconData.typeId = typeId;
+    storeIconData.dbImagePath = dbImagePath;
+    if (!fs.existsSync(dirPath)) {
+        mkdirp(dirPath, function (err) {
+            if (err) {
+                console.error(err);
+            } else {
+                sampleFile.mv(dirImagePath, function(err) {
+                    if (err)
+                      return res.status(500).send(err);
+                    uploadFile(dirImagePath, dbImagePath);
+                });
+            }
+        });            
+    } else {
+        sampleFile.mv(dirImagePath, function(err) {
+            if (err)
+              return res.status(500).send(err);
+            uploadFile(dirImagePath, dbImagePath);
         });
     }
-    setTimeout(function(){ res.redirect('/stores'); }, 2000);
+
+    DbFunctionsModel.saveSingleIcon(storeIconData, function(err, result) {
+        console.dir("Updated store icon");
+    });
+
+    setTimeout(function(){
+       res.redirect('/');
+    }, 2000);
+});
+
+router.post('/upload_multi_image', function(req, res){
+
+    var typeId = req.body.typeId;
+    var type = req.body.type;
+    var parentId = req.body.parentId;
+
+    let localPath = "";
+    if(req.body.type == "product_multi") {
+        localPath = config.default.product_images.replace(/{{product_id}}/gi, typeId);
+    } else if(req.body.type == "store_multi") {
+        localPath = config.default.store_images.replace(/{{store_id}}/gi, typeId);
+    }
+
+
+    if(req.files) {
+        for(var i =0; i<req.files.multiPhotos.length; i++) {
+            let imageName = S(req.files.multiPhotos[i].name).replaceAll(' ', '_').s;
+            let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
+            let dirPath = path.join(__dirname+'/../public/'+localPath);
+            let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
+                            
+            let sampleFile = req.files.multiPhotos[i];
+
+            var storeIconData = new Object();
+            storeIconData.type = type;
+            storeIconData.parentId = parentId;
+            storeIconData.typeId = typeId;
+            storeIconData.dbImagePath = dbImagePath;
+            storeIconData.dbImageName = imageName.substring(0, imageName.indexOf('.'));
+            storeIconData.displayPriority = 0;
+            storeIconData.status = 1;
+            if (!fs.existsSync(dirPath)) {
+                mkdirp(dirPath, function (err) {
+                    if (err) {
+                        console.error(err);
+                    } else {
+                        sampleFile.mv(dirImagePath, function(err) {
+                            if (err)
+                              return res.status(500).send(err);
+                            uploadFile(dirImagePath, dbImagePath);
+                        });
+                    }
+                });            
+            } else {
+                sampleFile.mv(dirImagePath, function(err) {
+                    if (err)
+                      return res.status(500).send(err);
+                    uploadFile(dirImagePath, dbImagePath);
+                    //console.dir('File uploaded!');
+                });
+            }
+            DbFunctionsModel.saveMultiImages(storeIconData
+                , function(err, result) {
+                    //console.dir("Added store image");
+            });
+        }
+        var resData = new Object();
+        resData.success = true;
+        res.send(resData);
+    }
 });
 
 router.post('/multi_image', function (req, res) {
@@ -187,10 +259,12 @@ router.post('/changeStatus', function (req, res) {
 })
 
 router.get('/getAllImages', function (req, res) {
-
+    //console.dir(req.body);
     var postData = new Object();
-    postData.storeId = req.query.storeId;
-    StoresModel.getStoreImages(postData, function(err, result) {
+    postData.typeId = req.query.typeId;
+    postData.parentId = req.query.parentId;
+    postData.type = req.query.type;
+    DbFunctionsModel.getAllImages(postData, function(err, result){
         var resData = new Object();
         resData.success = true;
         resData.data = result;

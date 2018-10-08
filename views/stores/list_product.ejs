@@ -29,7 +29,7 @@
                     <tr>
                         <th scope="row"><%= data[i].id %></th>
                         <td>
-                        <a class="dropdown-item edit_product_icon" data-product-status="1" data-type="product_icon" data-product-id="<%= data[i].id %>" id="edit_product_icon" href="javascript:void(0);">
+                        <a class="dropdown-item edit_product_icon" data-product-status="1" data-type="product_icon" data-id="<%= data[i].id %>" data-type="product_icon" data-parent-id="<%= storeId %>" id="edit_product_icon" href="javascript:void(0);">
                         <img src="<%= data[i].image %>" style="width:60px;" />
                         </a>
                         </td>
@@ -51,9 +51,9 @@
 
                                         <div class="dropdown-header">Images</div>
                                         
-                                        <a class="dropdown-item view_store_multi_images" data-type="product_multi" data-product-id="<%= data[i].id %>" href="javascript:void(0);">View Product All Images</a>
+                                        <a class="dropdown-item view_multi_images" data-type="product_multi"  data-parent-id="<%= storeId %>" data-id="<%= data[i].id %>" href="javascript:void(0);">View Product All Images</a>
                                         
-                                        <a class="dropdown-item product_multi_images" data-type="product_multi" data-prooduct-id="<%= data[i].id %>" href="javascript:void(0);">Add Product All Image</a>
+                                        <a class="dropdown-item product_multi_images" data-type="product_multi" data-parent-id="<%= storeId %>" data-id="<%= data[i].id %>" href="javascript:void(0);">Add Product All Image</a>
 
                                     </div>
                             </div>

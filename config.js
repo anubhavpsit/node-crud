@@ -14,6 +14,7 @@ module.exports.default = {
   store_icon: 'tmp_images/store/{{store_id}}/store_logo/',
   product_icon: 'tmp_images/product/{{product_id}}/product_logo/',
   store_images: 'tmp_images/store/{{store_id}}/store_images/',
+  product_images: 'tmp_images/product/{{product_id}}/product_images/',
   s3url : 'https://s3.ap-south-1.amazonaws.com/ally-staging-images/'
 }
 

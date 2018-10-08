@@ -58,7 +58,7 @@ function getStoreProductsList(storeId, callback) {
     //storeId = 4;
     db.query('SELECT * FROM store_product_master WHERE store_id = '+storeId+' order by id desc', function(err, res, fields) {
         for(var i = 0; i<res.length; i++) {
-            console.dir(res[i].image);
+            //console.dir(res[i].image);
             if((res[i].image == null) || (res[i].image == '')) {
                 res[i].image = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
             } else {
@@ -105,6 +105,89 @@ function changeStatus(data, callback) {
     }
 }
 
+function saveSingleIcon(data, callback) {
+    if(data.type == "product_icon"){
+        db.query("UPDATE store_product_master set image = '"+data.dbImagePath+"' WHERE id = " + data.typeId, function(err, result) {
+            if (err) throw err
+                callback(err, result);
+        });
+    } else if(data.type == "store_icon") {
+        db.query("UPDATE store_master set image = '"+data.dbImagePath+"' WHERE store_id = " + data.typeId, function(err, result) {
+            if (err) throw err
+                callback(err, result);
+        });
+    } else {
+        callback(err, {});
+    }
+}
+
+function getAllImages(data, callback) {
+
+    if(data.type == "product_multi") {
+        db.query('SELECT * FROM product_images_mapping WHERE product_id = '+data.typeId+' order by id desc', function(err, res, fields) {
+            if(err) {
+                console.dir(err);                
+            } else {
+                for(var i = 0; i<res.length; i++) {
+                    //console.dir(res[i].image);
+                    if((res[i].image_file == null) || (res[i].image_file == '')) {
+                        res[i].image_file = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+                    } else {
+                        //let s3Url = config.default.s3url +res[i].image;
+                        res[i].image_file = config.default.s3url +res[i].image_file;
+                    }
+                    //res[i].image = s3Url;
+                }
+                callback(err, res);
+            }
+        });
+    } else {
+        db.query('SELECT * FROM store_images_mapping WHERE store_id = '+data.typeId+' order by id desc', function(err, res, fields) {
+            if(err) {
+                console.dir(err);                
+            } else {
+                for(var i = 0; i<res.length; i++) {
+                    //console.dir(res[i].image);
+                    if((res[i].image_file == null) || (res[i].image_file == '')) {
+                        res[i].image_file = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+                    } else {
+                        //let s3Url = config.default.s3url +res[i].image;
+                        res[i].image_file = config.default.s3url +res[i].image_file;
+                    }
+                    //res[i].image = s3Url;
+                }
+                callback(err, res);
+            }
+        });
+    }
+}
+
+function saveMultiImages(data, callback) { 
+
+    var postData = [
+        data.typeId,
+        data.dbImageName,
+        data.dbImagePath,
+        data.displayPriority,
+        data.status];
+
+    if(data.type == "product_multi") {
+        db.query('INSERT INTO product_images_mapping (\
+            product_id,image_name,image_file,\
+            display_priority, status) VALUES (?, ?, ?, ?, ?)', postData, function(err, result) {
+            if (err) throw err
+                callback(err, result);
+          });
+    } else {
+        db.query('INSERT INTO store_images_mapping (\
+        store_id,image_name,image_file,\
+        display_priority, status) VALUES (?, ?, ?, ?, ?)', postData, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+      });
+    }
+}
+
 module.exports = {
     getStoreTypeData: getStoreTypeData,
     getClusterList: getClusterList,
@@ -116,5 +199,8 @@ module.exports = {
     getStoreProductsList: getStoreProductsList,
     addProduct: addProduct,
     saveProductIcon: saveProductIcon,
-    changeStatus: changeStatus
+    changeStatus: changeStatus,
+    saveSingleIcon: saveSingleIcon,
+    getAllImages: getAllImages,
+    saveMultiImages: saveMultiImages
 }
