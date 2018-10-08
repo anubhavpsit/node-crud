@@ -55,20 +55,6 @@ router.get('/getClusterFloor', function (req, res) {
         resData.data = result;
         res.send(resData);
     });
-
-
-    // var promise = loadDbData();
-    // promise.then( function(result) {
-    //     // console.dir("result");
-    //     // console.dir(result);
-    //     // yay! I got the result.
-    //     res.render('create_store', { data: result });
-    // }, function(error) {
-    //     // The promise was rejected with this error.
-    //     console.dir("error");
-    //     console.dir(error);
-    // });
-    // res.render('create_store');
 });
 
 router.get('/add', function (req, res) {
@@ -267,6 +253,113 @@ router.post('/add', function (req, res) {
     });
 })
 
+
+
+// define the home page route
+router.get('/productsList/:storeId', function (req, res) {
+    DbFunctionsModel.getStoreProductsList(req.params.storeId, function(err, result) {
+        //res.render('api', { data: result, title: "Test API Output" });
+        //console.dir(result);
+        res.render('list_product', { data: result, storeId: req.params.storeId })
+    });
+})
+
+router.get('/productsList/add/:storeId', function (req, res) {
+
+    var promise = loadProductData(req.params.storeId);
+    promise.then(function(result) {
+        res.render('create_product', { data: result });
+    }, function(error) {
+        // The promise was rejected with this error.
+        console.dir("error");
+        console.dir(error);
+    });
+    // res.render('create_store');
+    // DbFunctionsModel.getStoreProductsList(req.params.storeId, function(err, result) {
+    //     //res.render('api', { data: result, title: "Test API Output" });
+    //     //console.dir(result);
+    //     res.render('list_product', { data: result })
+    // });
+})
+
+router.post('/productsList/add', function (req, res) {
+    DbFunctionsModel.addProduct(req.body, function(err, result) {
+        if(result.insertId) {
+            if((req.files) && (typeof req.files.product_icon != "undefined")) {
+                var productId = result.insertId;
+                let imageName = S(req.files.product_icon.name).replaceAll(' ', '_').s;
+                let localPath = config.default.product_icon.replace(/{{product_id}}/gi, productId);
+                let dbImagePath = S(localPath).replaceAll('tmp_images/', '').s+imageName;
+                let dirPath = path.join(__dirname+'/../public/'+localPath);
+                let dirImagePath = path.join(__dirname+'/../public/'+localPath+imageName);
+                                
+                let sampleFile = req.files.product_icon;
+
+                var productIconData = new Object();
+                productIconData.productId = productId;
+                productIconData.dbImagePath = dbImagePath;
+                if (!fs.existsSync(dirPath)) {
+                    mkdirp(dirPath, function (err) {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            sampleFile.mv(dirImagePath, function(err) {
+                                if (err)
+                                return res.status(500).send(err);;
+                                DbFunctionsModel.saveProductIcon(productIconData
+                                    , function(err, result) {
+                                        console.dir("Added product image");
+                                        //console.dir(result);
+                                });
+                                uploadFile(dirImagePath, dbImagePath);
+                            });
+                        }
+                    });
+                } else {
+                    sampleFile.mv(dirImagePath, function(err) {
+                        if (err)
+                        return res.status(500).send(err);
+                        DbFunctionsModel.saveProductIcon(productIconData
+                            , function(err, result) {
+                                console.dir("Added product image");
+                                //console.dir(result);
+                        });
+                        uploadFile(dirImagePath, dbImagePath);
+                        console.dir('File uploaded!');
+                    });
+                }
+            }
+            res.redirect('/stores/productsList/' + req.body.store_id)
+        }
+    });
+});
+
+router.post('/product/changeStatus', function (req, res) {
+    //res.render('create_store')
+    req.body.action="product";
+    DbFunctionsModel.changeStatus(req.body, function(err, result) {
+        //console.dir(result.affectedRows);
+        if(result.affectedRows) {
+            var resData = new Object();
+            resData.success = true;
+            res.send(resData);
+        } else {
+            var resData = new Object();
+            resData.success = false;
+            res.send(resData);
+        }
+    });
+})
+
+
+
+
+
+
+
+
+
+
 var storeTypes = () => {
     var storeTypes = [];
     DbFunctionsModel.getStoreTypeData(function(err, result) {
@@ -306,6 +399,14 @@ router.get('/stores', function (req, res) {
   res.render('/stores/list_stores.ejs', { title: 'Hey', message: 'Hello there!' })
 })
 
+function loadProductData(storeId)
+{
+    return new Promise(function(resolve, reject) {
+        var data = new Object();
+        data.storeId = storeId;
+        resolve(data);
+    });
+}
 
 function loadDbData()
 {

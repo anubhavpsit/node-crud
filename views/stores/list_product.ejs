@@ -1,0 +1,67 @@
+<%- include partials/header.ejs %>
+
+<div class="col-lg-12">
+    <div class="col-lg-12">
+        <table class="table">
+            <tr>
+                <td>
+                    <a class="btn btn-primary" href="add/<%= storeId %>" role="button">Add Product</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Product list for store id #<%= storeId %>
+                </td>
+            </tr>
+        </table>
+        <table class="table">
+            <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Icon</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i < data.length; i++) { %>
+                    <tr>
+                        <th scope="row"><%= data[i].id %></th>
+                        <td>
+                        <a class="dropdown-item edit_product_icon" data-product-status="1" data-type="product_icon" data-product-id="<%= data[i].id %>" id="edit_product_icon" href="javascript:void(0);">
+                        <img src="<%= data[i].image %>" style="width:60px;" />
+                        </a>
+                        </td>
+                        <td><%= data[i].product_name %></td>
+                        <td><%= data[i].status %></td>
+                        <td>
+                            <div class="dropdown dropleft">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <div class="dropdown-header">Status</div>
+
+                                        <a class="dropdown-item edit_product_Status" data-status="1" data-id="<%= data[i].id %>" href="javascript:void(0);">Active</a>
+
+                                        <a class="dropdown-item edit_product_Status" data-status="0" data-id="<%= data[i].id %>" href="javascript:void(0);">Inactive</a>
+
+                                        <a class="dropdown-item edit_product_Status" data-status="2" data-id="<%= data[i].id %>" href="javascript:void(0);">Pending</a>
+
+                                        <div class="dropdown-header">Images</div>
+                                        
+                                        <a class="dropdown-item view_store_multi_images" data-type="product_multi" data-product-id="<%= data[i].id %>" href="javascript:void(0);">View Product All Images</a>
+                                        
+                                        <a class="dropdown-item product_multi_images" data-type="product_multi" data-prooduct-id="<%= data[i].id %>" href="javascript:void(0);">Add Product All Image</a>
+
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<%- include partials/footer.ejs %>

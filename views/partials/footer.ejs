@@ -298,6 +298,43 @@ $(document).ready(function() {
         return false;
     });
 
+    
+
+    $(".edit_product_Status").on("click", function(e) {
+      e.preventDefault();
+      $("#loadMe").modal({
+        backdrop: "static", //remove ability to close modal with click
+        keyboard: false, //remove option to close with keyboard
+        show: true //Display loader!
+      });
+
+        var data = new Object();
+        data.status = $(this).data('status');
+        data.id = $(this).data('id');
+        console.dir(data);
+        $.ajax({
+        type: "POST",
+        url: url+'stores/product/changeStatus',
+        data: data,
+        success: function(data){
+            if(data.success) {
+                location.reload();
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 1000);
+            } else {
+                alert("Some error occoured in updating status");
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 500);
+            }
+        },
+        dataType: 'json'
+        });
+      
+
+    });
+
     $(".edit_store_Status").on("click", function(e) {
       e.preventDefault();
       $("#loadMe").modal({
