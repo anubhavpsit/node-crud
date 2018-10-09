@@ -25,6 +25,7 @@ app.use('/', require('./routes/home'));
 app.use('/stores', require('./routes/stores'));
 app.use('/company', require('./routes/company'));
 app.use('/offers', require('./routes/offers'));
+app.use('/RequestManager', require('./routes/RequestManager.js'));
 
 // Add history
 app.use('/v1/add', require('./routes/addHistory'));
