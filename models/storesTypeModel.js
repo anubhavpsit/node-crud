@@ -2,6 +2,24 @@ var db = require('./db_connection');
 var config = require('../config');
 var fs = require("fs");
 
+function getStoresList(callback) {
+    db.query('SELECT * FROM store_master where store_type_id = 1 AND status = 1 order by store_id desc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function getOfferTypes(callback) {
+    db.query('SELECT * FROM offer_type where status = 1 order by id desc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function getOfferCategory(callback) {
+    db.query('SELECT * FROM offer_category_master where status = 1 order by offer_category_id desc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
 function getStoreTypeData(callback) {
     db.query('SELECT * FROM store_type_master where status = 1 order by store_type_id asc', function(err, res, fields) {
         callback(err, res);
@@ -22,6 +40,17 @@ function getCompanyList(callback) {
 
 function getClusterFloors(data, callback) {
     db.query('select id,cluster_id,floor_number,floor_alias FROM cluster_floor_details where cluster_id = '+data.clusterId+' order by id asc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function getClusterStores(data, callback) {
+    if(data.clusterId == 0) {
+        db.query('select * FROM store_master order by store_id asc', function(err, res, fields) {
+            callback(err, res);
+        });
+    }
+    db.query('select * FROM store_master where store_id = '+data.clusterId+' order by store_id asc', function(err, res, fields) {
         callback(err, res);
     });
 }
@@ -189,7 +218,7 @@ function saveMultiImages(data, callback) {
 }
 
 function getAllOffersList(callback) {
-    db.query('SELECT a.*,b.offer_type as offer_type_text,c.offer_category as offer_category_text FROM advertisment_master a, offer_type b, offer_category_master c where a.offer_type_id = b.id AND a.offer_category_id = c.offer_category_id', function(err, res, fields) {
+    db.query('SELECT a.*,b.offer_type as offer_type_text,c.offer_category as offer_category_text FROM advertisment_master a, offer_type b, offer_category_master c where a.offer_type_id = b.id AND a.offer_category_id = c.offer_category_id order by offer_id desc', function(err, res, fields) {
         for(var i = 0; i<res.length; i++) {
             if((res[i].banner_image == null) || (res[i].banner_image == '')) {
                 res[i].banner_image = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
@@ -204,6 +233,49 @@ function getAllOffersList(callback) {
         }
 
         callback(err, res);
+    });
+}
+
+
+function saveOfferImage(data, callback) {
+    console.dir("saveOfferImage Called" + data.colName);
+    let my_sql = "UPDATE advertisment_master set "+data.colName+" = '"+data.dbImagePath+"' WHERE offer_id = " + data.offerId;
+    console.dir(my_sql);
+    db.query(my_sql, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+      });
+}
+
+function saveOffersData(data, callback) {
+    if(typeof(data.is_multiclaim_offer) == "undefined") {
+        data.is_multiclaim_offer = 0;
+    } else {
+        data.is_multiclaim_offer = 1;
+    }
+    var postData = [
+        data.cluster_id,
+        data.offer_in_category_id,
+        data.offer_title,
+        data.offer_description,
+        data.start_date,
+        data.end_date,
+        data.is_multiclaim_offer,
+        data.max_claim_count,
+        data.offer_points,
+        data.offer_type_id,
+        data.offer_category_id
+    ];
+  
+    db.query('INSERT INTO advertisment_master (\
+        cluster_id, category_code, offer_title, offer_description, validity_from, validity_to,\
+        multi_claim, max_claim, offer_points, offer_type_id, offer_category_id\
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
+        if (err) {
+            throw err;
+        } else {
+            callback(err, result);
+        }
     });
 }
 
@@ -222,5 +294,11 @@ module.exports = {
     saveSingleIcon: saveSingleIcon,
     getAllImages: getAllImages,
     saveMultiImages: saveMultiImages,
-    getAllOffersList: getAllOffersList
+    getAllOffersList: getAllOffersList,
+    getOfferCategory: getOfferCategory,
+    getOfferTypes: getOfferTypes,
+    getStoresList: getStoresList,
+    getClusterStores: getClusterStores,
+    saveOffersData: saveOffersData,
+    saveOfferImage: saveOfferImage
 }

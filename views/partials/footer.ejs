@@ -191,6 +191,40 @@ $(document).ready(function() {
         });
     });
 
+
+    $("#cluster_id_offers_page").on('change', function(){
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+
+        var data = new Object();
+        data.clusterId = $(this).val();
+        $.ajax({
+          type: "GET",
+          url: url+'offers/getClusterStores',
+          data: data,
+          success: function(data){
+            var floor_options = '';
+            for(var i =0; i<data.data.length; i++) {
+              floor_options += '<option value='+data.data[i].store_id+'>';
+              floor_options += 'id => ' +data.data[i].store_id;
+              floor_options += '# => ' +data.data[i].store_name;
+              floor_options += '</option>';              
+            }
+            setTimeout(function(){
+              $("#loadMe").modal("hide");
+            }, 500);
+            $("#stores_list").html(floor_options);
+            $("#stores_list").attr("disabled", false);
+          },
+          error: function(data){
+          },
+          dataType: 'json'
+        });
+    });
+
     $(".edit_store_icon, .edit_product_icon").on("click", function(e) {
       e.preventDefault();
       $("#singleEntityTypeId").val($(this).data('id'));
@@ -437,9 +471,19 @@ $(document).ready(function() {
         },
         dataType: 'json'
         });
-      
-
     });
+
+  $("#is_multiclaim_offer").click(function() {
+      if($(this).prop('checked')==true){
+        //Set multi claim offer
+        $('#max_claim_count').removeAttr('readonly');
+        $("#max_claim_count").val(10);
+      } else {
+        //Unset multi claim offer
+        $("#max_claim_count").attr('readonly', 'true');
+        $("#max_claim_count").val(1);
+      }
+  });
 });
 </script>
 </html>
