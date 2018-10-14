@@ -7,13 +7,14 @@ function saveRequestRawData(data, callback) {
     
     var postData = [
         data.instance_id,
+        data.request_from_server,
         data.headers,
         data.raw_request,
         data.request_url,
         "0"
     ];
     //console.dir(postData);
-    db.query('INSERT INTO api_incoming_requests (instance_id, request_headers, raw_request, request_url, status) VALUES (?, ?, ?, ?, ?)', postData, function(err, result) {
+    db.query('INSERT INTO api_incoming_requests (instance_id, request_from_server, request_headers, raw_request, request_url, status) VALUES (?, ?, ?, ?, ?, ?)', postData, function(err, result) {
         if (err) {
             //console.log('this.sql', this.sql);
             throw err;
