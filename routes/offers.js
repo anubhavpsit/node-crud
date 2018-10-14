@@ -186,6 +186,35 @@ router.get('/', function (req, res) {
     });
 })
 
+
+// define the home page route
+router.get('/mappedStoresList/:offerId', function (req, res) {
+    DbFunctionsModel.getOffersMappedStoreList(req.params.offerId, function(err, result) {
+        //res.render('api', { data: result, title: "Test API Output" });
+        console.dir(req.params.offerId);
+        console.dir(result);
+        res.render('list_mapped_stores', { data: result, storeId: req.params.offerId })
+    });
+})
+
+router.get('/mappedStoresList/add/:offerId', function (req, res) {
+
+    var promise = loadProductData(req.params.storeId);
+    promise.then(function(result) {
+        res.render('create_product', { data: result });
+    }, function(error) {
+        // The promise was rejected with this error.
+        console.dir("error");
+        console.dir(error);
+    });
+    // res.render('create_store');
+    // DbFunctionsModel.getStoreProductsList(req.params.storeId, function(err, result) {
+    //     //res.render('api', { data: result, title: "Test API Output" });
+    //     //console.dir(result);
+    //     res.render('list_product', { data: result })
+    // });
+})
+
 function loadDbData()
 {
     return new Promise(function(resolve, reject) {

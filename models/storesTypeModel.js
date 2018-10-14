@@ -279,6 +279,23 @@ function saveOffersData(data, callback) {
     });
 }
 
+function getOffersMappedStoreList(offerId, callback) {
+
+    db.query('SELECT * FROM ad_store_mapping WHERE offer_id = '+offerId+' order by id desc', function(err, res, fields) {
+        // for(var i = 0; i<res.length; i++) {
+        //     //console.dir(res[i].image);
+        //     if((res[i].image == null) || (res[i].image == '')) {
+        //         res[i].image = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
+        //     } else {
+        //         //let s3Url = config.default.s3url +res[i].image;
+        //         res[i].image = config.default.s3url +res[i].image;
+        //     }
+        //     //res[i].image = s3Url;
+        // }
+        callback(err, res);
+    });
+}
+
 module.exports = {
     getStoreTypeData: getStoreTypeData,
     getClusterList: getClusterList,
@@ -300,5 +317,6 @@ module.exports = {
     getStoresList: getStoresList,
     getClusterStores: getClusterStores,
     saveOffersData: saveOffersData,
-    saveOfferImage: saveOfferImage
+    saveOfferImage: saveOfferImage,
+    getOffersMappedStoreList: getOffersMappedStoreList
 }

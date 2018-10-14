@@ -45,10 +45,12 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <div class="dropdown-header">Status</div>
+                                            <a class="dropdown-item edit_store_Status" data-store-status="1" data-store-id="<%= data[i].store_id %>" id="toggle_store_Status" href="javascript:void(0);">Active</a>
+                                            <a class="dropdown-item edit_store_Status" data-store-status="0" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Inactive</a>
+                                            <a class="dropdown-item edit_store_Status" data-store-status="2" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Pending</a>
 
-                                        <div class="dropdown-header">Images</div>
-
-                                        <div class="dropdown-header">Product</div>
+                                        <div class="dropdown-header">Stores Mapped</div>
+                                        <a class="dropdown-item store_products" href="offers/mappedStoresList/<%= data[i].offer_id %>">View Mapped Stores</a>
                                     </div>
                             </div>
                         </td>
