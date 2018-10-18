@@ -62,10 +62,11 @@ function saveStoreData(data, callback) {
                     data.store_floor,
                     data.x_coordinates,
                     data.y_coordinates,
+                    data.z_coordinates,
                     1
                 ];
     
-                db.query('INSERT INTO store_floor_details (cluster_id, store_id, floor_number, x_axis, y_axis, status) VALUES (?, ?, ?, ?, ?, ?)', floorData, function(err, result) {
+                db.query('INSERT INTO store_floor_details (cluster_id, store_id, floor_number, x_axis, y_axis, z_axis, status) VALUES (?, ?, ?, ?, ?, ?, ?)', floorData, function(err, result) {
     //                console.dir(result);
                     if (err) {
                         // throw err
