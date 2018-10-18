@@ -17,16 +17,32 @@
         <table class="table">
             <thead>
                 <tr>
-                <th scope="col">#</th>
-                <th scope="col">Icon</th>
-                <th scope="col">Store Name</th>
-                <th scope="col">Floor Number</th>
+                <th scope="col">Store Id</th>
+                <th scope="col">Floor Id</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-
+                <% for(var i=0; i < data.length; i++) { %>
+                    <tr>
+                        <td><%= data[i].store_id %></td>
+                        <td><%= data[i].floor_id %></td>
+                        <td><%= data[i].status %></td>
+                        <td>
+                            <div class="dropdown dropleft">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <div class="dropdown-header">Status</div>
+                                        <a class="dropdown-item edit_floor_status" data-status="1" data-ad-floor-mapping-id="<%= data[i].id %>" id="toggle_store_Status" href="javascript:void(0);">Active</a>
+                                        <a class="dropdown-item edit_floor_status" data-status="0" data-ad-floor-mapping-id="<%= data[i].id %>" href="javascript:void(0);">Inactive</a>
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>

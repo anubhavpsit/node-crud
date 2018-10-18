@@ -44,6 +44,17 @@ router.get('/getClusterStores', function (req, res) {
     });
 });
 
+router.get('/getStoreFloors', function (req, res) {
+    var postData = new Object();
+    postData.storeId = req.query.storeId;
+    DbFunctionsModel.getStoreFloorsList(postData, function(err, result) {
+        var resData = new Object();
+        resData.success = true;
+        resData.data = result;
+        res.send(resData);
+    });
+});
+
 router.get('/add', function (req, res) {
     var promise = loadDbData();
     promise.then( function(result) {
@@ -191,29 +202,119 @@ router.get('/', function (req, res) {
 router.get('/mappedStoresList/:offerId', function (req, res) {
     DbFunctionsModel.getOffersMappedStoreList(req.params.offerId, function(err, result) {
         //res.render('api', { data: result, title: "Test API Output" });
-        console.dir(req.params.offerId);
-        console.dir(result);
-        res.render('list_mapped_stores', { data: result, storeId: req.params.offerId })
+        res.render('list_mapped_stores', { data: result, offerId: req.params.offerId })
+    });
+})
+
+router.post('/addStores', function (req, res) {
+
+    let storeOffers = JSON.parse(req.body.offer_in_stores);
+    let offerId = req.body.offer_id;
+    for (let i=0; i<storeOffers.length; i++ ) {
+        let storeId = storeOffers[i].store_id;
+        let storeFloors = storeOffers[i].store_floors;
+        //console.dir(storeOffers[i].store_floors.length);
+        for (let j=0; j<storeFloors.length; j++) {
+            // Check if store exists then update the status else insert the new record
+            DbFunctionsModel.getStoreFloorData( {
+                'offer_id' : offerId,
+                'store_id' : storeId,
+                'floor_id' : storeFloors[j]
+            } ,function(err, result) {
+//                console.dir(result);
+                if(result.length == 0) {
+                    //console.dir("Adding");
+                    DbFunctionsModel.addStoreFloorData( {
+                        'offer_id' : offerId,
+                        'store_id' : storeId,
+                        'floor_id' : storeOffers[i].store_floors[j],
+                        'status' : 1
+                    } ,function(err, result) {
+                        //console.dir(result);
+                    });
+                } else {
+                    DbFunctionsModel.updateStoreFloorStatus( {
+                        'id' : result[0].id,
+                        'status' : 1,
+                    } ,function(err, result) {
+                        //console.dir(result);
+                    });
+                }
+            });
+        }
+    }
+    // Redirect now
+    var resData = new Object();
+    resData.success = true;
+    resData.offerId = offerId;
+    res.send(resData);
+    // res.redirect('offers/mappedStoresList/'+offerId);
+})
+
+router.post('/changeStatus', function (req, res) {
+    DbFunctionsModel.changeOfferStatus(req.body, function(err, result) {
+        if(result.affectedRows) {
+            var resData = new Object();
+            resData.success = true;
+            res.send(resData);
+        } else {
+            var resData = new Object();
+            resData.success = false;
+            res.send(resData);
+        }
+    });
+})
+
+router.post('/mappedStores/changeStatus', function (req, res) {
+    console.dir(req.body);
+    DbFunctionsModel.updateStoreFloorStatus( {
+        'id' : req.body.id,
+        'status' : req.body.status,
+    } ,function(err, result) {
+        if(result.affectedRows) {
+            var resData = new Object();
+            resData.success = true;
+            res.send(resData);
+        } else {
+            var resData = new Object();
+            resData.success = false;
+            res.send(resData);
+        }
     });
 })
 
 router.get('/mappedStoresList/add/:offerId', function (req, res) {
-
-    var promise = loadProductData(req.params.storeId);
-    promise.then(function(result) {
-        res.render('create_product', { data: result });
-    }, function(error) {
-        // The promise was rejected with this error.
-        console.dir("error");
-        console.dir(error);
+    let offerId = req.params.offerId;
+    var offerData = new Object();
+    DbFunctionsModel.getOfferData( offerId ,function(err, result) {
+        offerData.offerData = result[0];
+        DbFunctionsModel.getOfferFloorData(offerId ,function(err, result) {
+            offerData.offerFloorData = result;
+            DbFunctionsModel.getClusterStores({'clusterId': offerData.offerData.cluster_id} ,function(err, result) {
+                offerData.offerClusterStores = result;
+                res.render('add_stores_in_offer', { data: offerData, offerId: offerId })
+            });
+        });
     });
-    // res.render('create_store');
-    // DbFunctionsModel.getStoreProductsList(req.params.storeId, function(err, result) {
-    //     //res.render('api', { data: result, title: "Test API Output" });
-    //     //console.dir(result);
-    //     res.render('list_product', { data: result })
-    // });
 })
+
+function loadOfferData(offerId)
+{
+    return new Promise(offerId, function(resolve, reject) {
+        console.dir(offerId);
+        var data = new Object();
+        // var offerData = [];
+        // var offerFloorData = [];
+        DbFunctionsModel.getOfferData( 5 ,function(err, result) {
+            data.offerData = result;
+            resolve(data);
+            // DbFunctionsModel.getOfferFloorData(localStorage.getItem("offerId") ,function(err, result) {
+            //     data.offerFloorData = result;
+            //     resolve(data);
+            // });
+        });
+    });
+}
 
 function loadDbData()
 {

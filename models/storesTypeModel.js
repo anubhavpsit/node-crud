@@ -50,7 +50,13 @@ function getClusterStores(data, callback) {
             callback(err, res);
         });
     }
-    db.query('select * FROM store_master where store_id = '+data.clusterId+' order by store_id asc', function(err, res, fields) {
+    db.query('select * FROM store_master where cluster_id = '+data.clusterId+' order by store_id asc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function getStoreFloorsList(data, callback) {
+    db.query('select * FROM store_floor_details where store_id = '+data.storeId+' order by id asc', function(err, res, fields) {
         callback(err, res);
     });
 }
@@ -191,6 +197,18 @@ function getAllImages(data, callback) {
     }
 }
 
+function getOfferData(offerId, callback) {
+    db.query('SELECT * FROM advertisment_master WHERE offer_id = '+offerId, function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function getOfferFloorData(offerId, callback) {
+    db.query('SELECT * FROM ad_floor_mapping WHERE offer_id = '+offerId, function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
 function saveMultiImages(data, callback) { 
 
     var postData = [
@@ -282,17 +300,45 @@ function saveOffersData(data, callback) {
 function getOffersMappedStoreList(offerId, callback) {
 
     db.query('SELECT * FROM ad_store_mapping WHERE offer_id = '+offerId+' order by id desc', function(err, res, fields) {
-        // for(var i = 0; i<res.length; i++) {
-        //     //console.dir(res[i].image);
-        //     if((res[i].image == null) || (res[i].image == '')) {
-        //         res[i].image = 'https://ally-staging-images.s3.ap-south-1.amazonaws.com/anubhav/bom1.png';
-        //     } else {
-        //         //let s3Url = config.default.s3url +res[i].image;
-        //         res[i].image = config.default.s3url +res[i].image;
-        //     }
-        //     //res[i].image = s3Url;
-        // }
         callback(err, res);
+    });
+}
+
+function getStoreFloorData(data, callback) {
+    db.query('SELECT * FROM ad_store_mapping WHERE offer_id = '+data.offer_id+' AND floor_id = '+data.floor_id+' AND store_id='+data.store_id+' order by id desc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function addStoreFloorData(data, callback) {
+    var postData = [
+        data.offer_id,
+        data.store_id,
+        data.floor_id,
+        data.status
+    ];
+  
+    db.query('INSERT INTO ad_store_mapping (\
+        offer_id, store_id, floor_id, status) VALUES (?, ?, ?, ?)', postData, function(err, result) {
+        if (err) {
+            throw err;
+        } else {
+            callback(err, result);
+        }
+    });    
+}
+
+function updateStoreFloorStatus(data, callback) {
+    db.query("UPDATE ad_store_mapping set status = '"+data.status+"' WHERE id = " + data.id, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+    });
+}
+
+function changeOfferStatus(data, callback) {
+    db.query("UPDATE advertisment_master set status = '"+data.status+"' WHERE offer_id = " + data.offer_id, function(err, result) {
+        if (err) throw err
+            callback(err, result);
     });
 }
 
@@ -316,7 +362,14 @@ module.exports = {
     getOfferTypes: getOfferTypes,
     getStoresList: getStoresList,
     getClusterStores: getClusterStores,
+    getStoreFloorsList: getStoreFloorsList,
     saveOffersData: saveOffersData,
     saveOfferImage: saveOfferImage,
-    getOffersMappedStoreList: getOffersMappedStoreList
+    getOffersMappedStoreList: getOffersMappedStoreList,
+    getOfferData: getOfferData,
+    getOfferFloorData: getOfferFloorData,
+    getStoreFloorData: getStoreFloorData,
+    addStoreFloorData: addStoreFloorData,
+    updateStoreFloorStatus: updateStoreFloorStatus,
+    changeOfferStatus: changeOfferStatus
 }

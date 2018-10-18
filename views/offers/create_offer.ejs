@@ -26,23 +26,15 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="inputPassword4">Cluster</label>
-                    <select id="cluster_id_offers_page" name="cluster_id" class="form-control">
+                    <select id="cluster_id_offers_page_new" name="cluster_id" class="form-control">
                         <option selected value="0">Choose...</option>
                         <% for(var i=0; i < data.clustersList.length; i++) { %>
-                            <option value="<%= data.clustersList[i].cluster_id %>"><%= data.clustersList[i].cluster_name %></option>
+                            <option value="<%= data.clustersList[i].cluster_id %>">
+                                <%= data.clustersList[i].cluster_name %>
+                            </option>
                         <% } %>
                     </select>
                 </div>
-                <div class="form-group col-md-6">
-                    <label for="inputPassword4">Stores List</label>
-                    <select id="stores_list" name="stores_list" class="form-control" multiple>
-                        <% for(var i=0; i < data.storesList.length; i++) { %>
-                            <option value="<%= data.storesList[i].store_id %>"><%= data.storesList[i].store_name %></option>
-                        <% } %>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="inputPassword4">Category</label>
                     <select id="offer_in_category_id" name="offer_in_category_id" class="form-control">

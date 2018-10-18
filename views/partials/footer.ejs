@@ -191,14 +191,22 @@ $(document).ready(function() {
         });
     });
 
-
     $("#cluster_id_offers_page").on('change', function(){
         $("#loadMe").modal({
           backdrop: "static", //remove ability to close modal with click
           keyboard: false, //remove option to close with keyboard
           show: true //Display loader!
         });
+        $("#stores_container").html('');
+    });
 
+    $("#cluster_id_offers_page_new").on('change', function(){
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+        
         var data = new Object();
         data.clusterId = $(this).val();
         $.ajax({
@@ -206,6 +214,7 @@ $(document).ready(function() {
           url: url+'offers/getClusterStores',
           data: data,
           success: function(data){
+            console.dir(data);
             var floor_options = '';
             for(var i =0; i<data.data.length; i++) {
               floor_options += '<option value='+data.data[i].store_id+'>';
@@ -216,14 +225,64 @@ $(document).ready(function() {
             setTimeout(function(){
               $("#loadMe").modal("hide");
             }, 500);
+
             $("#stores_list").html(floor_options);
             $("#stores_list").attr("disabled", false);
+
           },
           error: function(data){
           },
           dataType: 'json'
         });
     });
+
+  $("#add_more_stores").on('click', function() {
+
+    $('body').append("<div id='temp_div'></div>");
+    
+    var new_row_index = $(".stores_list_row").last().data('row-index')+1;
+    $("#temp_div").html($('.stores_list_row').html());    
+    $("#temp_div").find(".store_floor_data").html('');
+
+    var x1 = '<div class="stores_list_row col-lg-12" id="stores_index_'+new_row_index+'" style="padding:5px" data-row-index="'+new_row_index+'">';
+        x1 += $("#temp_div").html();
+        x1 += '</div>';
+
+    $("#temp_div").remove();
+    $("#offer_stores").append($(x1));
+  });
+
+/*
+
+  $(".stores_list").bind("change", function() {
+    console.dir("AAAAAAAA");
+    var data = new Object();
+    data.storeId = $(this).val();
+    var element = $(this).parent().parent();
+    $.ajax({
+      type: "GET",
+      url: url+'offers/getStoreFloors',
+      data: data,
+      success: function(r){
+        console.dir(r);
+        console.dir(element);
+
+        var html = "<div class='col-md-12' style='padding:20px;'>";
+        for(var i=0; i< r.data.length; i++) {
+          html += "<div class='col-md-2' style='padding:10px;float:left;padding:5px;'>";
+          html += "<input type ='checkbox' class='form-check-input' value="+r.data[i].id+"> Floor Number " + r.data[i].floor_number;
+          html += "</div>";
+        }
+        html += "</div>";
+        $(element).find($(".store_floor_data")).html(html);
+      },
+      error: function(data){
+      },
+      dataType: 'json'
+    });    
+  });
+
+*/
 
     $(".edit_store_icon, .edit_product_icon").on("click", function(e) {
       e.preventDefault();
@@ -484,6 +543,159 @@ $(document).ready(function() {
         $("#max_claim_count").val(1);
       }
   });
+    $('body').on('click', '.stores_list', function () {
+        // jQuery("img.lazy").lazy({});
+        // alert('ddsda');
+        getStores(url, $(this).val(), $(this).parent().parent().parent());
+    });
+    $('body').on('click', '.remove_store', function () {
+        $(this).parent().parent().parent().remove();
+    });
+
+    $(".edit_offer_Status").on("click", function(e) {
+      e.preventDefault();
+      $("#loadMe").modal({
+        backdrop: "static", //remove ability to close modal with click
+        keyboard: false, //remove option to close with keyboard
+        show: true //Display loader!
+      });
+
+      var data = new Object();
+      data.status = $(this).data('offer-status');
+      data.offer_id = $(this).data('offer-id');
+      console.dir(data);
+      $.ajax({
+      type: "POST",
+      url: url+'offers/changeStatus',
+      data: data,
+      success: function(data){
+          if(data.success) {
+              location.reload();
+              setTimeout(function() {
+                  $("#loadMe").modal("hide");
+              }, 1000);
+          } else {
+              alert("Some error occoured in updating status");
+              setTimeout(function() {
+                  $("#loadMe").modal("hide");
+              }, 500);
+          }
+      },
+      dataType: 'json'
+      });
+    });
+
+
+    $(".edit_floor_status").on("click", function(e) {
+      e.preventDefault();
+      $("#loadMe").modal({
+        backdrop: "static", //remove ability to close modal with click
+        keyboard: false, //remove option to close with keyboard
+        show: true //Display loader!
+      });
+
+        var data = new Object();
+        data.status = $(this).data('status');
+        data.id = $(this).data('ad-floor-mapping-id');
+        $.ajax({
+        type: "POST",
+        url: url+'offers/mappedStores/changeStatus',
+        data: data,
+        success: function(data){
+            if(data.success) {
+                location.reload();
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 1000);
+            } else {
+                alert("Some error occoured in updating status");
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 500);
+            }
+        },
+        dataType: 'json'
+        });
+    });
+
+    $("#save_store_floors").on('click', function() {
+      var stores = [];
+      $("#offer_stores").find($(".stores_list_row")).each(function(){
+        //console.dir($(this).find($(".store_floor_data")).find(".store_floor_id"));
+        var data = new Object();
+        data.store_id = $(this).find($(".stores_list")).val();
+
+        var store_floors = [];
+        $(this).find($(".store_floor_data")).find(".store_floor_id:checked").each(function(){
+            store_floors.push($(this).val());
+        });
+        data.store_floors = store_floors;
+        if(data.store_floors.length > 0) {
+          stores.push(data);
+        }
+      });
+
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+
+        var a_data = new Object();
+        a_data.offer_id = $("#offer_id").data("offer-id");
+        a_data.offer_in_stores = JSON.stringify(stores);
+
+        $.ajax({
+        type: "POST",
+        url: url+'offers/addStores',
+        data: a_data,
+        success: function(data){
+            console.dir(data);
+            if (data.success) {
+                //location.reload();
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 1000);
+                window.location.href = "/offers/mappedStoresList/"+a_data.offer_id;
+            } else {
+                alert("Some error occoured in updating status");
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 500);
+            }
+        },
+        dataType: 'json'
+        });
+
+      //dasdda
+    });
 });
+
+function getStores(url, storeId, element) {
+
+    var data = new Object();
+    data.storeId = storeId; //$(this).val();
+    //var element = element //$(this).parent().parent();
+    $.ajax({
+      type: "GET",
+      url: url+'offers/getStoreFloors',
+      data: data,
+      success: function(r){
+        var html = "<div class='row'><div class='col-md-12' style='padding:20px;'>";
+        for(var i=0; i< r.data.length; i++) {
+          html += "<div class='col-md-2' style='padding:10px;float:left;padding:5px;'>";
+          html += "<input type ='checkbox' class='store_floor_id form-check-input' value="+r.data[i].id+"> Floor Number " + r.data[i].floor_number;
+          html += "</div>";
+        }
+        html += "</div></div>";
+        $(element).find($(".store_floor_data")).html(html);
+      },
+      error: function(data){
+      },
+      dataType: 'json'
+    });
+}
+
+
 </script>
 </html>

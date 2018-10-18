@@ -1,0 +1,53 @@
+<%- include partials/header.ejs %>
+
+<div class="col-lg-12">
+    <div class="col-lg-12">
+        <table class="table">
+            <tr>
+                <td>
+                    <a class="btn btn-primary" href="/offers/mappedStoresList/<%= offerId %>" role="button">Go Back</a>
+                </td>
+                <td>
+                    <a class="btn btn-primary" id="save_store_floors" href="javascript:void(0);" role="button">Save Store</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                   Stores Mapped to offer id #<span id='offer_id' data-offer-id="<%= offerId %>"><%= offerId %></span>
+                </td>
+            </tr>
+            <tr>
+                <td id="offer_stores">
+                   <div class="stores_list_row col-lg-12" id="stores_index_0" style="padding:5px" data-row-index="0">
+                        <div class="row">
+                            <div class="col-lg-11">
+                                <select name="cluster_stores" class="stores_list form-control">
+                                    <option selected value="0">Choose...</option>
+                                    <% for(var i=0; i < data.offerClusterStores.length; i++) { %>
+                                        <option value="<%= data.offerClusterStores[i].store_id %>">
+                                            <%= data.offerClusterStores[i].store_id %>#<%= data.offerClusterStores[i].store_name %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-lg-1">
+                                <a href="javascript:void(0);" class="remove_store">
+                                    Remove
+                                </a>                                
+                            </div>
+                        </div>
+                        <div class="col-lg-12 store_floor_data">
+    
+                        </div>
+                   </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a class="btn btn-primary" id="add_more_stores" href="javascript:void(0);" role="button">Add More Stores</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<%- include partials/footer.ejs %>
