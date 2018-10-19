@@ -120,8 +120,8 @@
 <script type="text/javascript">
 $(document).ready(function() {
   console.dir("OK");
-    var url = 'http://localhost:3001/';
-
+    var url = configs.backend_server; //'http://localhost:3001/';
+    console.dir(url);
     $("#category_id").on('change', function(){
         $("#loadMe").modal({
           backdrop: "static", //remove ability to close modal with click

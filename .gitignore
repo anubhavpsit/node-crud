@@ -3,3 +3,4 @@ history/*
 public/images/*
 public/tmp_images/*
 config.js
+public/js/constants.js
