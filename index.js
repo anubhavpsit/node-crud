@@ -5,6 +5,7 @@ var fs = require("fs");
 var bodyParser = require('body-parser');
 var path = require('path');
 var db = require('./models/db_connection');
+var config = require('./config');
 
 app.use(fileUpload());
 
@@ -49,9 +50,9 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var server = app.listen(3001, function () {
-  var host = server.address().address
-  var port = server.address().port
+var server = app.listen(config.default.port, function () {
+  var host = config.default.server
+  var port = config.default.port
   console.log("Server listening at http://%s:%s", host, port)
 });
 
