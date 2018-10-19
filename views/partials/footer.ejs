@@ -116,6 +116,22 @@
     </div>
 </div>
 
+<div class="modal fade" style="overflow:scroll;" id="manageStoreFloors" tabindex="-1" role="dialog" aria-labelledby="manageStoreFloorsLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Manage store floors</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+          <div id="store_floors_list" class="row">Please wait</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -617,6 +633,96 @@ $(document).ready(function() {
         },
         dataType: 'json'
         });
+    });
+
+    $(".manage_store_floors").on('click', function(e) {
+        e.preventDefault();
+        $("#manageStoreFloors").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+
+        var clusterList = [];
+        var data = new Object();
+        data.clusterId = $(this).data('cluster-id');
+        $.ajax({
+          type: "GET",
+          url: url+'stores/getClusterFloor',
+          data: data,
+          async: false,
+          success: function(data){
+            clusterList = data;
+          },
+          error: function(data){
+          },
+          dataType: 'json'
+        });
+
+        var storeFloors = [];
+        var data = new Object();
+        data.storeId = $(this).data('store-id');
+        $.ajax({
+          type: "GET",
+          url: url+'offers/getStoreFloors',
+          data: data,
+          async: false,
+          success: function(data){
+            storeFloors = data;
+          },
+          error: function(data){
+          },
+          dataType: 'json'
+        });
+
+        console.dir(clusterList);
+        console.dir(storeFloors);
+
+        var html = "";
+        var storeF = storeFloors.data;
+        for(var i=0; i< storeF.length; i++) {
+          console.dir(storeF[i].floor_number);
+          html += '<div class="row">';
+            html += '<div class="row col-md-12" style="margin:5px;" id="floor_row">';
+              html += '<div class="form-group col-md-4">';
+              html += '<label for="inputPassword4">Store Floor</label>';
+              html += '<select id="store_floor" name="store_floor" class="form-control">';
+              html += '<option selected="" value="0">Choose...</option>';
+              for(var j=0; j<clusterList.data.length; j++) {
+                if(clusterList.data[j].floor_number == storeF[i].floor_number) {
+                  html += '<option selected value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
+                } else {
+                  html += '<option selected="" value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
+                }
+              }
+              html += '</select>';
+              html += '</div>';
+              html += '<div class="form-group col-md-2">';
+              html += '<label for="inputPassword4">X Coordinates</label>';
+              html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="55">';
+              html += '</div>';
+              html += '<div class="form-group col-md-2">';
+              html += '<label for="inputEmail4">Y Coordinates</label>';
+              html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="56">';
+              html += '</div>';
+              html += '<div class="form-group col-md-2">';
+              html += '<label for="inputEmail4">Z Coordinates</label>';
+              html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="57">';
+              html += '</div>';
+            html += '</div>';
+            html += '<div class="row col-md-12" style="margin:5px;">';
+                html += '<div class="row col-md-4" style="margin:5px;">';
+                    html +='<a class="btn btn-primary add_more_floor" href="javascript:void(0);" role="button">Add More Floor</a>';
+                html += '</div>';
+                html += '<div class="row col-md-4" style="margin:5px;">';
+                    html +='<a class="btn btn-primary" href="javascript:void(0); role="button">Save Now</a>';
+                html += '</div>';
+            html += '</div>';  
+          html += '</div>';
+
+        }
+        $("#store_floors_list").html(html);  
+
     });
 
     $("#save_store_floors").on('click', function() {

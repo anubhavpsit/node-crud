@@ -40,6 +40,8 @@
                                         Actions
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <div class="dropdown-header">Floors</div>
+                                        <a class="dropdown-item manage_store_floors" data-cluster-id="<%= data[i].cluster_id %>" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Manage Floors</a>
                                         <div class="dropdown-header">Status</div>
                                         <a class="dropdown-item edit_store_Status" data-store-status="1" data-store-id="<%= data[i].store_id %>" id="toggle_store_Status" href="javascript:void(0);">Active</a>
                                         <a class="dropdown-item edit_store_Status" data-store-status="0" data-store-id="<%= data[i].store_id %>" href="javascript:void(0);">Inactive</a>
