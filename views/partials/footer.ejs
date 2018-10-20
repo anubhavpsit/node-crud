@@ -635,17 +635,17 @@ $(document).ready(function() {
         });
     });
 
-    $(".manage_store_floors").on('click', function(e) {
+    $('body').on('click', '.manage_store_floors', function (e) {
         e.preventDefault();
         $("#manageStoreFloors").modal({
           backdrop: "static", //remove ability to close modal with click
           keyboard: false, //remove option to close with keyboard
           show: true //Display loader!
         });
-
+        var curClusterId = $(this).data('cluster-id');
         var clusterList = [];
         var data = new Object();
-        data.clusterId = $(this).data('cluster-id');
+        data.clusterId = curClusterId;
         $.ajax({
           type: "GET",
           url: url+'stores/getClusterFloor',
@@ -675,9 +675,6 @@ $(document).ready(function() {
           dataType: 'json'
         });
 
-        console.dir(clusterList);
-        console.dir(storeFloors);
-
         var html = "";
         var storeF = storeFloors.data;
         for(var i=0; i< storeF.length; i++) {
@@ -699,30 +696,118 @@ $(document).ready(function() {
               html += '</div>';
               html += '<div class="form-group col-md-2">';
               html += '<label for="inputPassword4">X Coordinates</label>';
-              html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="55">';
+              html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="'+storeF[i].x_axis+'">';
               html += '</div>';
               html += '<div class="form-group col-md-2">';
               html += '<label for="inputEmail4">Y Coordinates</label>';
-              html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="56">';
+              html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="'+storeF[i].y_axis+'">';
               html += '</div>';
               html += '<div class="form-group col-md-2">';
               html += '<label for="inputEmail4">Z Coordinates</label>';
-              html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="57">';
+              html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="'+storeF[i].z_axis+'">';
               html += '</div>';
             html += '</div>';
+          html += '</div>';
+        }
+        html += '<div class="row col-md-12" style="margin:5px;">';
+            html += '<div class="row col-md-4" style="margin:5px;">';
+                html +='<a class="btn btn-primary add_more_floor" data-cluster-id='+curClusterId+' href="javascript:void(0);" role="button">Add More Floor</a>';
+            html += '</div>';
+            html += '<div class="row col-md-4" style="margin:5px;">';
+                html +='<a class="btn btn-primary" href="javascript:void(0); role="button">Save Now</a>';
+            html += '</div>';
+        html += '</div>';  
+        $("#store_floors_list").html(html);  
+
+    });
+
+    $('body').on('click', '.add_more_floor', function (e) {
+      e.preventDefault();
+      var curClusterId = $(this).data('cluster-id');
+        var clusterList = [];
+        var data = new Object();
+        data.clusterId = curClusterId;
+        $.ajax({
+          type: "GET",
+          url: url+'stores/getClusterFloor',
+          data: data,
+          async: false,
+          success: function(data){
+            clusterList = data;
+          },
+          error: function(data){
+          },
+          dataType: 'json'
+        });
+
+
+          if($("#store_floors_list").find($("#floor_row")).length ==0) {
+            var html = '';
+            html += '<div class="row">';
+              html += '<div class="row col-md-12" style="margin:5px;" id="floor_row">';
+                html += '<div class="form-group col-md-4">';
+                html += '<label for="inputPassword4">Store Floor</label>';
+                html += '<select id="store_floor" name="store_floor" class="form-control">';
+                html += '<option selected="" value="0">Choose...</option>';
+                for(var j=0; j<clusterList.data.length; j++) {
+                  html += '<option selected="" value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
+                }
+                html += '</select>';
+                html += '</div>';
+                html += '<div class="form-group col-md-2">';
+                html += '<label for="inputPassword4">X Coordinates</label>';
+                html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="0">';
+                html += '</div>';
+                html += '<div class="form-group col-md-2">';
+                html += '<label for="inputEmail4">Y Coordinates</label>';
+                html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="0">';
+                html += '</div>';
+                html += '<div class="form-group col-md-2">';
+                html += '<label for="inputEmail4">Z Coordinates</label>';
+                html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="0">';
+                html += '</div>';
+              html += '</div>';
+            html += '</div>';
+
             html += '<div class="row col-md-12" style="margin:5px;">';
                 html += '<div class="row col-md-4" style="margin:5px;">';
-                    html +='<a class="btn btn-primary add_more_floor" href="javascript:void(0);" role="button">Add More Floor</a>';
+                    html +='<a class="btn btn-primary add_more_floor" data-cluster-id='+curClusterId+' href="javascript:void(0);" role="button">Add More Floor</a>';
                 html += '</div>';
                 html += '<div class="row col-md-4" style="margin:5px;">';
                     html +='<a class="btn btn-primary" href="javascript:void(0); role="button">Save Now</a>';
                 html += '</div>';
             html += '</div>';  
-          html += '</div>';
 
-        }
-        $("#store_floors_list").html(html);  
-
+            $("#store_floors_list").html(html);
+          } else {
+            var html = '';
+            html += '<div class="row">';
+              html += '<div class="row col-md-12" style="margin:5px;">';
+                html += '<div class="form-group col-md-4">';
+                html += '<label for="inputPassword4">Store Floor</label>';
+                html += '<select id="store_floor" name="store_floor" class="form-control">';
+                html += '<option selected="" value="0">Choose...</option>';
+                for(var j=0; j<clusterList.data.length; j++) {
+                  html += '<option selected="" value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
+                }
+                html += '</select>';
+                html += '</div>';
+                html += '<div class="form-group col-md-2">';
+                html += '<label for="inputPassword4">X Coordinates</label>';
+                html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="0">';
+                html += '</div>';
+                html += '<div class="form-group col-md-2">';
+                html += '<label for="inputEmail4">Y Coordinates</label>';
+                html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="0">';
+                html += '</div>';
+                html += '<div class="form-group col-md-2">';
+                html += '<label for="inputEmail4">Z Coordinates</label>';
+                html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="0">';
+                html += '</div>';
+              html += '</div>';
+            html += '</div>';
+            $("#floor_row").after(html);
+          }
     });
 
     $("#save_store_floors").on('click', function() {
