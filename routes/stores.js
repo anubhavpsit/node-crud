@@ -272,6 +272,56 @@ router.get('/getAllImages', function (req, res) {
     });
 });
 
+router.post('/removeFloorRow', function (req, res) {
+    DbFunctionsModel.removeFloorRow({
+        'floor_index' : req.body.floor_index
+    } ,function(err, result) {});
+    var resData = new Object();
+    resData.success = true;
+    res.send(resData);
+});
+
+router.post('/saveFloorData', function (req, res) {
+    //console.dir(req.body);
+    let storeFloors = JSON.parse(req.body.store_floors);
+    //console.dir(storeFloors);
+    for (let i=0; i<storeFloors.length; i++ ) {
+        DbFunctionsModel.getStoreFloorDataRow( {
+            'store_id' : storeFloors[i].store_id,
+            'cluster_id' : storeFloors[i].cluster_id,
+            'floor_number' : storeFloors[i].floor_number,
+            'floor_store_x' : storeFloors[i].floor_store_x,
+            'floor_store_y' : storeFloors[i].floor_store_y,
+            'floor_store_z' : storeFloors[i].floor_store_z,
+        } ,function(err, result) {
+            //console.dir(result);
+            if(result.length == 0) {
+                console.dir("Adding Floor");
+                DbFunctionsModel.addStoreFloorRow( {
+                    'store_id' : storeFloors[i].store_id,
+                    'cluster_id' : storeFloors[i].cluster_id,
+                    'floor_number' : storeFloors[i].floor_number,
+                    'floor_store_x' : storeFloors[i].floor_store_x,
+                    'floor_store_y' : storeFloors[i].floor_store_y,
+                    'floor_store_z' : storeFloors[i].floor_store_z,
+                    'status' : 1
+                } ,function(err, result) {
+                    console.dir("Added Floor");
+                });
+            } else {
+                console.dir("Updating Floor");
+                DbFunctionsModel.updateStoreFloorRow( storeFloors[i] ,function(err, result) {
+                    console.dir("Updated Floor");
+                });
+            }
+        });
+    }
+    // Redirect now
+    var resData = new Object();
+    resData.success = true;
+    res.send(resData);
+});
+
 router.post('/add', function (req, res) {
     //console.dir(req.body);
     StoresModel.saveStoreData(req.body, function(err, result) {

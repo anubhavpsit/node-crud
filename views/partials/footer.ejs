@@ -659,9 +659,10 @@ $(document).ready(function() {
           dataType: 'json'
         });
 
+        var curStoreId = $(this).data('store-id');
         var storeFloors = [];
         var data = new Object();
-        data.storeId = $(this).data('store-id');
+        data.storeId = curStoreId;
         $.ajax({
           type: "GET",
           url: url+'offers/getStoreFloors',
@@ -678,47 +679,128 @@ $(document).ready(function() {
         var html = "";
         var storeF = storeFloors.data;
         for(var i=0; i< storeF.length; i++) {
-          console.dir(storeF[i].floor_number);
+          //console.dir(storeF[i].floor_number);
           html += '<div class="row">';
-            html += '<div class="row col-md-12" style="margin:5px;" id="floor_row">';
+            html += '<div class="row col-md-12 each_floor_store_row" style="margin:5px;" id="floor_row">';
               html += '<div class="form-group col-md-4">';
               html += '<label for="inputPassword4">Store Floor</label>';
-              html += '<select id="store_floor" name="store_floor" class="form-control">';
+              html += '<select id="store_floor" name="store_floor" class="form-control floor_store_row">';
               html += '<option selected="" value="0">Choose...</option>';
               for(var j=0; j<clusterList.data.length; j++) {
+                //console.dir(clusterList.data[j].floor_number+"##"+storeF[i].floor_number);
                 if(clusterList.data[j].floor_number == storeF[i].floor_number) {
-                  html += '<option selected value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
-                } else {
                   html += '<option selected="" value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
+                } else {
+                  html += '<option value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
                 }
               }
               html += '</select>';
               html += '</div>';
               html += '<div class="form-group col-md-2">';
               html += '<label for="inputPassword4">X Coordinates</label>';
-              html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="'+storeF[i].x_axis+'">';
+              html += '<input type="text" class="form-control floor_store_x" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="'+storeF[i].x_axis+'">';
               html += '</div>';
               html += '<div class="form-group col-md-2">';
               html += '<label for="inputEmail4">Y Coordinates</label>';
-              html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="'+storeF[i].y_axis+'">';
+              html += '<input type="text" class="form-control floor_store_y" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="'+storeF[i].y_axis+'">';
               html += '</div>';
               html += '<div class="form-group col-md-2">';
               html += '<label for="inputEmail4">Z Coordinates</label>';
-              html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="'+storeF[i].z_axis+'">';
+              html += '<input type="text" class="form-control floor_store_z" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="'+storeF[i].z_axis+'">';
+              html += '</div>';
+              html += '<div class="form-group col-md-1">';
+              html += '<label for="inputEmail4"></label>';
+              html += '<a href="javascript:void(0);" data-floor-p-id="'+storeF[i].id+'" class="remove_store_row">Remove</a>';
               html += '</div>';
             html += '</div>';
           html += '</div>';
         }
         html += '<div class="row col-md-12" style="margin:5px;">';
             html += '<div class="row col-md-4" style="margin:5px;">';
-                html +='<a class="btn btn-primary add_more_floor" data-cluster-id='+curClusterId+' href="javascript:void(0);" role="button">Add More Floor</a>';
+                html +='<a class="btn btn-primary add_more_floor" data-store-id="'+curStoreId+'" data-cluster-id='+curClusterId+' href="javascript:void(0);" role="button">Add More Floor</a>';
             html += '</div>';
             html += '<div class="row col-md-4" style="margin:5px;">';
-                html +='<a class="btn btn-primary" href="javascript:void(0); role="button">Save Now</a>';
+                html +='<a class="btn btn-primary save_floor_now" href="javascript:void(0); role="button">Save Now</a>';
             html += '</div>';
         html += '</div>';  
         $("#store_floors_list").html(html);  
 
+    });
+
+    $('body').on('click', '.remove_store_row', function (e) {
+          e.preventDefault();
+          var index_id = $(this).data("floor-p-id");
+          $(this).parent().parent().remove();
+          if (index_id > 0) {
+            // $("#loadMe").modal({
+            //   backdrop: "static", //remove ability to close modal with click
+            //   keyboard: false, //remove option to close with keyboard
+            //   show: true //Display loader!
+            // });
+            var b_data = new Object();
+            b_data.floor_index = index_id;
+            $.ajax({
+              type: "POST",
+              url: url+'stores/removeFloorRow',
+              data: b_data,
+              async: false,
+              success: function(data){
+                console.dir(data);
+              },
+              error: function(data){
+              },
+              dataType: 'json'
+            });
+          }          
+    });
+    $('body').on('click', '.save_floor_now', function (e) {
+          e.preventDefault();
+
+          var storeFloors = [];
+          $(".each_floor_store_row").each(function(){
+            var floorData = new Object();
+            floorData.store_id = $(".add_more_floor").data('store-id');
+            floorData.cluster_id = $(".add_more_floor").data('cluster-id');
+            floorData.floor_number = $(this).find('.floor_store_row').val();            
+            floorData.floor_store_x = $(this).find('.floor_store_x').val();
+            floorData.floor_store_y = $(this).find('.floor_store_y').val();
+            floorData.floor_store_z = $(this).find('.floor_store_z').val();
+            storeFloors.push(floorData);
+          });
+
+          $("#loadMe").modal({
+            backdrop: "static", //remove ability to close modal with click
+            keyboard: false, //remove option to close with keyboard
+            show: true //Display loader!
+          });
+
+          //console.dir(storeFloors);
+          var b_data = new Object();
+          b_data.store_floors = JSON.stringify(storeFloors);
+
+          $.ajax({
+            type: "POST",
+            url: url+'stores/saveFloorData',
+            data: b_data,
+            async: false,
+            success: function(data){
+              console.dir(data);
+              if (data.success) {
+                setTimeout(function() {
+                    $("#loadMe").modal("hide");
+                }, 1000);
+                window.location.href = "/stores";
+              } else {
+                  alert("Some error occoured in updating status");
+                  setTimeout(function() {
+                      $("#loadMe").modal("hide");
+                  }, 500);
+              }
+            },
+            error: function(data){
+            },
+            dataType: 'json'
+          });
     });
 
     $('body').on('click', '.add_more_floor', function (e) {
@@ -744,10 +826,10 @@ $(document).ready(function() {
           if($("#store_floors_list").find($("#floor_row")).length ==0) {
             var html = '';
             html += '<div class="row">';
-              html += '<div class="row col-md-12" style="margin:5px;" id="floor_row">';
+              html += '<div class="row col-md-12 each_floor_store_row" style="margin:5px;" id="floor_row">';
                 html += '<div class="form-group col-md-4">';
                 html += '<label for="inputPassword4">Store Floor</label>';
-                html += '<select id="store_floor" name="store_floor" class="form-control">';
+                html += '<select id="store_floor" name="store_floor" class="form-control floor_store_row">';
                 html += '<option selected="" value="0">Choose...</option>';
                 for(var j=0; j<clusterList.data.length; j++) {
                   html += '<option selected="" value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
@@ -756,25 +838,29 @@ $(document).ready(function() {
                 html += '</div>';
                 html += '<div class="form-group col-md-2">';
                 html += '<label for="inputPassword4">X Coordinates</label>';
-                html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="0">';
+                html += '<input type="text" class="form-control floor_store_x" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="0">';
                 html += '</div>';
                 html += '<div class="form-group col-md-2">';
                 html += '<label for="inputEmail4">Y Coordinates</label>';
-                html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="0">';
+                html += '<input type="text" class="form-control floor_store_y" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="0">';
                 html += '</div>';
                 html += '<div class="form-group col-md-2">';
                 html += '<label for="inputEmail4">Z Coordinates</label>';
-                html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="0">';
+                html += '<input type="text" class="form-control  floor_store_z" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="0">';
                 html += '</div>';
+                html += '<div class="form-group col-md-1">';
+                html += '<label for="inputEmail4"></label>';
+                html += '<a href="javascript:void(0);" data-floor-p-id="0" class="remove_store_row">Remove</a>';
+                html += '</div>'; 
               html += '</div>';
             html += '</div>';
 
             html += '<div class="row col-md-12" style="margin:5px;">';
                 html += '<div class="row col-md-4" style="margin:5px;">';
-                    html +='<a class="btn btn-primary add_more_floor" data-cluster-id='+curClusterId+' href="javascript:void(0);" role="button">Add More Floor</a>';
+                    html +='<a class="btn btn-primary add_more_floor" data-store-id="'+curStoreId+'" data-cluster-id='+curClusterId+' href="javascript:void(0);" role="button">Add More Floor</a>';
                 html += '</div>';
                 html += '<div class="row col-md-4" style="margin:5px;">';
-                    html +='<a class="btn btn-primary" href="javascript:void(0); role="button">Save Now</a>';
+                    html +='<a class="btn btn-primary save_floor_now" href="javascript:void(0); role="button">Save Now</a>';
                 html += '</div>';
             html += '</div>';  
 
@@ -782,10 +868,10 @@ $(document).ready(function() {
           } else {
             var html = '';
             html += '<div class="row">';
-              html += '<div class="row col-md-12" style="margin:5px;">';
+              html += '<div class="row col-md-12 each_floor_store_row" style="margin:5px;">';
                 html += '<div class="form-group col-md-4">';
                 html += '<label for="inputPassword4">Store Floor</label>';
-                html += '<select id="store_floor" name="store_floor" class="form-control">';
+                html += '<select id="store_floor" name="store_floor" class="form-control floor_store_row">';
                 html += '<option selected="" value="0">Choose...</option>';
                 for(var j=0; j<clusterList.data.length; j++) {
                   html += '<option selected="" value="'+clusterList.data[j].floor_number+'">'+clusterList.data[j].floor_number+'#'+''+clusterList.data[j].floor_alias+''+'</option>';
@@ -794,15 +880,19 @@ $(document).ready(function() {
                 html += '</div>';
                 html += '<div class="form-group col-md-2">';
                 html += '<label for="inputPassword4">X Coordinates</label>';
-                html += '<input type="text" class="form-control" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="0">';
+                html += '<input type="text" class="form-control floor_store_x" id="x_coordinates" name="x_coordinates" placeholder="X Coordinates" value="0">';
                 html += '</div>';
                 html += '<div class="form-group col-md-2">';
                 html += '<label for="inputEmail4">Y Coordinates</label>';
-                html += '<input type="text" class="form-control" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="0">';
+                html += '<input type="text" class="form-control floor_store_y" id="y_coordinates" name="y_coordinates" placeholder="Y Coordinates" value="0">';
                 html += '</div>';
                 html += '<div class="form-group col-md-2">';
                 html += '<label for="inputEmail4">Z Coordinates</label>';
-                html += '<input type="text" class="form-control" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="0">';
+                html += '<input type="text" class="form-control floor_store_z" id="z_coordinates" name="z_coordinates" placeholder="Z Coordinates" value="0">';
+                html += '</div>';
+                html += '<div class="form-group col-md-1">';
+                html += '<label for="inputEmail4"></label>';
+                html += '<a href="javascript:void(0);" data-floor-p-id="0" class="remove_store_row">Remove</a>';
                 html += '</div>';
               html += '</div>';
             html += '</div>';
@@ -842,9 +932,7 @@ $(document).ready(function() {
         url: url+'offers/addStores',
         data: a_data,
         success: function(data){
-            console.dir(data);
             if (data.success) {
-                //location.reload();
                 setTimeout(function() {
                     $("#loadMe").modal("hide");
                 }, 1000);

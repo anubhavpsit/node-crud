@@ -310,6 +310,51 @@ function getStoreFloorData(data, callback) {
     });
 }
 
+function getStoreFloorDataRow(data, callback) {
+    db.query('SELECT * FROM store_floor_details WHERE cluster_id = '+data.cluster_id+' AND store_id = '+data.store_id+' AND floor_number = '+data.floor_number+' order by id desc', function(err, res, fields) {
+        callback(err, res);
+    });
+}
+
+function updateStoreFloorRow(data, callback) {
+    db.query("UPDATE store_floor_details set status = 1, x_axis = '"+data.floor_store_x+"', y_axis = '"+data.floor_store_y+"', z_axis = '"+data.floor_store_z+"' WHERE cluster_id = '"+data.cluster_id+"' AND store_id = '"+data.store_id+"' AND floor_number = '"+data.floor_number+"'", function(err, result) {
+        if (err) throw err
+            callback(err, result);
+    });
+}
+
+function removeFloorRow(row_index, callback) {
+
+    // db.query("UPDATE store_floor_details set status = '3' WHERE id = " + row_index.floor_index, function(err, result) {
+    //     if (err) throw err
+    //         callback(err, result);
+    // });
+    db.query("DELETE FROM store_floor_details WHERE id = " + row_index.floor_index, function(err, result) {
+        if (err) throw err
+            callback(err, result);
+    });
+}
+
+function addStoreFloorRow(data, callback) {
+    var postData = [
+        data.cluster_id,
+        data.store_id,
+        data.floor_number,
+        data.floor_store_x,
+        data.floor_store_y,
+        data.floor_store_z,
+        data.status
+    ];
+    db.query('INSERT INTO store_floor_details (\
+        cluster_id, store_id, floor_number, x_axis, y_axis, z_axis, status) VALUES (?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
+        if (err) {
+            throw err;
+        } else {
+            callback(err, result);
+        }
+    });    
+}
+
 function addStoreFloorData(data, callback) {
     var postData = [
         data.offer_id,
@@ -371,5 +416,9 @@ module.exports = {
     getStoreFloorData: getStoreFloorData,
     addStoreFloorData: addStoreFloorData,
     updateStoreFloorStatus: updateStoreFloorStatus,
-    changeOfferStatus: changeOfferStatus
+    changeOfferStatus: changeOfferStatus,
+    getStoreFloorDataRow: getStoreFloorDataRow,
+    updateStoreFloorRow: updateStoreFloorRow,
+    addStoreFloorRow: addStoreFloorRow,
+    removeFloorRow: removeFloorRow
 }
