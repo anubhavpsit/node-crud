@@ -35,8 +35,8 @@
                         <td><%= data[i].offer_title %></td>
                         <td><%= data[i].offer_type_text %></td>
                         <td><%= data[i].offer_category_text %></td>
-                        <td><%= moment(data[i].validity_from).format( 'DD-MM-YYYY') %></td>
-                        <td><%= moment(data[i].validity_to).format( 'DD-MM-YYYY') %></td>
+                        <td><%= moment(data[i].validity_from).format( 'DD-MM-YYYY HH:mm:ss') %></td>
+                        <td><%= moment(data[i].validity_to).format( 'DD-MM-YYYY HH:mm:ss') %></td>
                         <td><%= data[i].status %></td>
                         <td>
                             <div class="dropdown dropleft">
