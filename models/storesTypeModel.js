@@ -282,13 +282,16 @@ function saveOffersData(data, callback) {
         data.max_claim_count,
         data.offer_points,
         data.offer_type_id,
-        data.offer_category_id
+        data.offer_category_id,
+        data.ad_priority,
+        data.campaign_type,
+        data.published_by
     ];
   
     db.query('INSERT INTO advertisment_master (\
         cluster_id, category_code, offer_title, offer_description, validity_from, validity_to,\
-        multi_claim, max_claim, offer_points, offer_type_id, offer_category_id\
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
+        multi_claim, max_claim, offer_points, offer_type_id, offer_category_id, ad_priority, campaign_type_id, published_by\
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', postData, function(err, result) {
         if (err) {
             throw err;
         } else {
